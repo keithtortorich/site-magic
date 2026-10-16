@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create Your Customer Site | NetBuild.Pro</title>
+  <style>
+    :root { --navy:#000080; --blue:#4169e1; --orange:#ff6600; --ink:#111827; --muted:#5f6b7a; --line:#d9deea; --wash:#f5f7fb; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:var(--wash); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; line-height:1.5; }
+    header { height:68px; padding:0 5vw; display:flex; align-items:center; justify-content:space-between; color:white; background:var(--navy); }
+    header a { color:white; text-decoration:none; font-weight:800; font-size:1.25rem; }
+    header span { color:#d9e2ff; font-size:.9rem; }
+    main { width:min(1120px,92vw); margin:42px auto 64px; display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,1.45fr); gap:34px; align-items:start; }
+    .intro { position:sticky; top:28px; padding:12px 8px; }
+    .eyebrow { color:var(--orange); font-weight:800; letter-spacing:.08em; text-transform:uppercase; font-size:.78rem; }
+    h1 { margin:.55rem 0 1rem; color:var(--navy); font-size:clamp(2.25rem,5vw,4rem); line-height:1.02; letter-spacing:-.045em; }
+    .lede { font-size:1.1rem; color:var(--muted); max-width:34rem; }
+    .steps { list-style:none; padding:0; margin:30px 0 0; display:grid; gap:16px; }
+    .steps li { display:grid; grid-template-columns:34px 1fr; gap:12px; align-items:center; font-weight:700; }
+    .steps b { width:34px; height:34px; display:grid; place-items:center; border-radius:50%; color:white; background:var(--blue); }
+    .card { background:white; border:1px solid var(--line); border-radius:18px; box-shadow:0 18px 45px rgba(0,0,80,.09); overflow:hidden; }
+    .card-head { padding:25px 28px 20px; border-bottom:1px solid var(--line); }
+    .card-head h2 { margin:0 0 4px; color:var(--navy); font-size:1.35rem; }
+    .card-head p { margin:0; color:var(--muted); font-size:.92rem; }
+    form { padding:26px 28px 30px; display:grid; gap:22px; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    label, legend { display:block; font-size:.88rem; font-weight:750; margin-bottom:7px; }
+    input, select, textarea { width:100%; min-height:46px; border:1px solid #b8c0cf; border-radius:9px; padding:10px 12px; font:inherit; color:var(--ink); background:white; }
+    textarea { min-height:82px; resize:vertical; }
+    input:focus, select:focus, textarea:focus { outline:3px solid rgba(65,105,225,.2); border-color:var(--blue); }
+    fieldset { border:0; padding:0; margin:0; }
+    .choices { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .choices.services { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .choice { display:flex; gap:9px; align-items:center; min-height:44px; padding:9px 11px; border:1px solid var(--line); border-radius:9px; cursor:pointer; font-weight:600; font-size:.88rem; }
+    .choice input { width:17px; min-height:auto; margin:0; accent-color:var(--blue); }
+    button { min-height:54px; border:0; border-radius:10px; color:white; background:var(--orange); font:800 1rem inherit; cursor:pointer; box-shadow:0 8px 20px rgba(255,102,0,.23); }
+    button:hover { background:#e85d00; }
+    button:disabled { opacity:.65; cursor:wait; }
+    .fine { margin:-10px 0 0; color:var(--muted); text-align:center; font-size:.78rem; }
+    #status { display:none; padding:12px 14px; border-radius:9px; font-weight:650; }
+    #status.error { display:block; color:#8c1c13; background:#fff0ee; }
+    #status.success { display:block; color:#075d35; background:#eaf9f1; }
+    @media (max-width:820px) { main { grid-template-columns:1fr; margin-top:26px; } .intro { position:static; } .steps { grid-template-columns:repeat(3,1fr); } .steps li { display:block; font-size:.8rem; } .steps b { margin-bottom:7px; } }
+    @media (max-width:580px) { header span { display:none; } .grid, .choices, .choices.services { grid-template-columns:1fr; } .card-head, form { padding-left:20px; padding-right:20px; } .steps { grid-template-columns:1fr; } .steps li { display:grid; font-size:.9rem; } }
+  </style>
+</head>
+<body>
+  <header><a href="/">NetBuild.Pro</a><span>Build the site first. Verify each integration before activation.</span></header>
+  <main>
+    <section class="intro">
+      <div class="eyebrow">Two-minute setup</div>
+      <h1>Build your customer site.</h1>
+      <p class="lede">Tell us how your business works. NetBuild.Pro creates your customer-ready website. Angel voice, lead routing, and booking are activated after their integrations are configured and verified.</p>
+      <ol class="steps">
+        <li><b>1</b><span>Share the basics</span></li>
+        <li><b>2</b><span>We build your site</span></li>
+        <li><b>3</b><span>Verify integrations</span></li>
+      </ol>
+    </section>
+    <section class="card" aria-labelledby="form-title">
+      <div class="card-head"><h2 id="form-title">Business setup</h2><p>Required fields only. You can add logos, reviews, and extras later.</p></div>
+      <form id="intake-form">
+        <div class="grid">
+          <div><label for="biz_name">Business name</label><input id="biz_name" name="biz_name" required autocomplete="organization" placeholder="Smith's Emergency Plumbing"></div>
+          <div><label for="industry">Industry</label><select id="industry" name="industry" required><option value="">Choose your trade</option><option>Plumber</option><option>Electrician</option><option>HVAC</option><option>Pest Control</option><option>Roofing</option><option>Landscaping</option><option>Cleaning</option><option>Other</option></select></div>
+          <div><label for="phone">Business phone</label><input id="phone" name="phone" type="tel" required autocomplete="tel" placeholder="555-123-4567"></div>
+          <div><label for="email">Business email</label><input id="email" name="email" type="email" required autocomplete="email" placeholder="smith@example.com"></div>
+        </div>
+        <div><label for="service_area">Service area</label><input id="service_area" name="service_area" required placeholder="Greater Denver Metro"></div>
+        <div class="grid">
+          <div><label for="tagline">Tagline</label><input id="tagline" name="tagline" required placeholder="Fast, honest, no surprises"></div>
+          <div><label for="license_number">License or registration number</label><input id="license_number" name="license_number" required placeholder="Enter N/A if not applicable"><span class="fine">Use N/A only when your business does not require one.</span></div>
+        </div>
+        <div><label for="differentiator">What makes you different?</label><textarea id="differentiator" name="differentiator" required placeholder="We show up on time. Always."></textarea></div>
+        <fieldset><legend>Services offered</legend><div class="choices services">
+          <label class="choice"><input type="checkbox" name="services" value="Emergency repairs">Emergency repairs</label>
+          <label class="choice"><input type="checkbox" name="services" value="Installation">Installation</label>
+          <label class="choice"><input type="checkbox" name="services" value="Maintenance">Maintenance</label>
+          <label class="choice"><input type="checkbox" name="services" value="Inspection">Inspection</label>
+          <label class="choice"><input type="checkbox" name="services" value="Repair">Repair</label>
+          <label class="choice"><input type="checkbox" name="services" value="Same-day service">Same-day service</label>
+        </div></fieldset>
+        <div class="grid">
+          <fieldset><legend>Launch plan</legend><div class="choices"><label class="choice"><input type="radio" name="plan" value="office_staff" checked>Office Staff - $497/month</label></div></fieldset>
+          <fieldset><legend>Lead routing</legend><div class="choices"><label class="choice"><input type="radio" name="lead_routing" value="Text my cell" checked>Text my cell</label><label class="choice"><input type="radio" name="lead_routing" value="Route to GHL">Route to GHL</label></div></fieldset>
+        </div>
+        <fieldset><legend>Who approves bookings?</legend><div class="choices"><label class="choice"><input type="radio" name="approver" value="Founder only" checked>Founder only</label><label class="choice"><input type="radio" name="approver" value="Team">Team</label></div></fieldset>
+        <div id="status" role="status" aria-live="polite"></div>
+        <button id="submit" type="submit">Create My Customer Site</button>
+        <p class="fine">By continuing, you confirm the business information is accurate.</p>
+      </form>
+    </section>
+  </main>
+  <script>
+    const form = document.getElementById('intake-form');
+    const statusBox = document.getElementById('status');
+    const submit = document.getElementById('submit');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      const services = data.getAll('services');
+      if (!services.length) { statusBox.className = 'error'; statusBox.textContent = 'Choose at least one service.'; return; }
+      const payload = Object.fromEntries(data.entries());
+      payload.services = services;
+      submit.disabled = true; submit.textContent = 'Building your site...'; statusBox.className = ''; statusBox.textContent = '';
+      try {
+        const response = await fetch('/intake', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+        let body = {};
+        const text = await response.text();
+        try { body = text ? JSON.parse(text) : {}; } catch { /* response was not JSON; use generic message below */ }
+        if (!response.ok) throw new Error(body.detail || 'We could not create your site. Please try again shortly.');
+        statusBox.className = 'success'; statusBox.textContent = 'Your site is live. Opening it now...';
+        window.location.assign('/sites/' + encodeURIComponent(body.tenant_id) + '/web');
+      } catch (error) {
+        statusBox.className = 'error'; statusBox.textContent = error.message + ' Please check the form and try again.';
+        submit.disabled = false; submit.textContent = 'Create My Customer Site';
+      }
+    });
+  </script>
+  
+  <!-- Vercel Speed Insights -->
+  <script>
+    window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+</html>

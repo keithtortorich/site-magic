@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NetBuild.Pro builds customer websites and activates Angel call handling for home service contractors.">
+    <title>{% block page_title %}NetBuild.Pro | Websites and call handling for contractors{% endblock %}</title>
+    <style>
+    :root {
+        --ws-primary-teal: #1a4d5e;
+        --ws-gold: #d4a574;
+        --ws-copper: #c85a3a;
+        --ws-cream: #f5f1e8;
+        --ws-dark-slate: #2a3a42;
+        --ws-light-gray: #f0f0f0;
+        --ws-border: #e2e6ec;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; color: #333; background: #fff; }
+
+    .ws-utility-bar { background: var(--ws-primary-teal); color: white; padding: 8px 0; font-size: 0.875rem; }
+    .ws-utility-bar-inner { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: flex-end; gap: 40px; align-items: center; }
+    .ws-utility-phone { display: flex; gap: 8px; align-items: center; }
+    .ws-utility-item-accent { font-weight: 700; color: var(--ws-gold); }
+
+    .ws-header { background: white; border-bottom: 1px solid var(--ws-border); position: sticky; top: 0; z-index: 100; }
+    .ws-header-inner { max-width: 1200px; margin: 0 auto; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .ws-brand { display: flex; gap: 12px; align-items: center; font-weight: 700; font-size: 1.25rem; color: var(--ws-primary-teal); }
+    .ws-logo { width: 32px; height: 32px; }
+    .ws-brand-text { font-weight: 700; }
+    .ws-nav { display: flex; gap: 32px; }
+    .ws-nav-link { color: #666; text-decoration: none; font-size: 0.95rem; transition: color 0.2s; }
+    .ws-nav-link:hover { color: var(--ws-copper); }
+    .ws-nav-cta { background: var(--ws-copper); color: white; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-size: 0.95rem; font-weight: 600; transition: background 0.2s; }
+    .ws-nav-cta:hover { background: #b04a2a; }
+
+    .ws-main { min-height: calc(100vh - 300px); }
+    .ws-section-inner { max-width: 1200px; margin: 0 auto; padding: 60px 20px; }
+    .ws-section-heading { font-size: 2.5rem; font-weight: 700; color: var(--ws-primary-teal); margin-bottom: 24px; }
+
+    .ws-btn { display: inline-block; padding: 12px 24px; border-radius: 4px; text-decoration: none; font-weight: 600; cursor: pointer; border: none; font-size: 1rem; transition: all 0.2s; }
+    .ws-btn-primary { background: var(--ws-copper); color: white; }
+    .ws-btn-primary:hover { background: #b04a2a; }
+
+    .ws-footer { background: var(--ws-dark-slate); color: white; padding: 60px 20px 24px; }
+    .ws-footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; margin-bottom: 40px; }
+    .ws-footer-heading { font-size: 1.125rem; font-weight: 700; margin-bottom: 12px; }
+    .ws-footer-subheading { font-size: 0.95rem; font-weight: 600; margin-bottom: 12px; }
+    .ws-footer-text { font-size: 0.9rem; line-height: 1.6; color: rgba(255,255,255,0.8); }
+    .ws-footer-links { list-style: none; }
+    .ws-footer-links a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.9rem; }
+    .ws-footer-links a:hover { color: var(--ws-gold); }
+    .ws-footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center; }
+    .ws-footer-copyright { font-size: 0.8rem; color: rgba(255,255,255,0.6); }
+
+    @media (max-width: 768px) {
+        .ws-nav { display: none; }
+        .ws-section-heading { font-size: 2rem; }
+    }
+    </style>
+</head>
+<body>
+    <div class="ws-utility-bar">
+        <div class="ws-utility-bar-inner">
+            <div class="ws-utility-phone">(888) 302-8368</div>
+            <div class="ws-utility-item"><span class="ws-utility-item-accent">Built for</span> Home Services</div>
+        </div>
+    </div>
+
+    <header class="ws-header">
+        <div class="ws-header-inner">
+            <div class="ws-brand">
+                <svg width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="ws-logo">
+                    <rect x="10" y="10" width="30" height="30" fill="#1a4d5e" rx="4"/>
+                    <rect x="50" y="10" width="30" height="30" fill="#d4a574" rx="4"/>
+                    <rect x="10" y="50" width="30" height="30" fill="#d4a574" rx="4"/>
+                    <rect x="50" y="50" width="30" height="30" fill="#1a4d5e" rx="4"/>
+                </svg>
+                <span class="ws-brand-text">NetBuild.Pro</span>
+            </div>
+            <nav class="ws-nav">
+                <a href="/agency" class="ws-nav-link">Home</a>
+                <a href="/agency/how-it-works" class="ws-nav-link">How It Works</a>
+                <a href="/agency/pricing" class="ws-nav-link">Pricing</a>
+                <a href="/agency/faq" class="ws-nav-link">FAQ</a>
+                <a href="/demos" class="ws-nav-link">Demos</a>
+                <a href="/agency/about" class="ws-nav-link">About</a>
+            </nav>
+            <a href="/agency/contact" class="ws-nav-cta">Get Started</a>
+        </div>
+    </header>
+
+    <main class="ws-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="ws-footer">
+        <div class="ws-footer-inner">
+            <div><h3 class="ws-footer-heading">NetBuild.Pro</h3><p class="ws-footer-text">Customer websites and call handling for home service businesses.</p></div>
+            <div><h4 class="ws-footer-subheading">Product</h4><ul class="ws-footer-links"><li><a href="/agency/how-it-works">How It Works</a></li><li><a href="/agency/pricing">Pricing</a></li><li><a href="/demos">Demo Sites</a></li></ul></div>
+            <div><h4 class="ws-footer-subheading">Company</h4><ul class="ws-footer-links"><li><a href="/agency/about">About</a></li><li><a href="/agency/contact">Contact</a></li></ul></div>
+            <div><h4 class="ws-footer-subheading">Contact</h4><p class="ws-footer-text"><a href="mailto:keithtortorich@gmail.com">keithtortorich@gmail.com</a><br>(888) 302-8368</p></div>
+        </div>
+        <p class="ws-footer-copyright">&copy; 2026 NetBuild.Pro. All rights reserved.</p>
+    </footer>
+</body>
+</html>

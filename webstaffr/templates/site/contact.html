@@ -1,0 +1,118 @@
+{% extends "site/base.html" %}
+{% import "site/_icons.html" as icons %}
+{% block content %}
+<!-- Hero Section (New Pattern) -->
+<section class="ws-hero">
+  <div class="ws-container">
+    <div class="ws-hero-grid">
+      <div>
+        <div class="ws-hero-tag">Get in Touch</div>
+        <h1 class="ws-h1">Contact {{ site.biz_name }}</h1>
+        <p class="ws-body-text">Questions about our services? Ready to schedule? We're here to help. Reach out today.</p>
+
+        <div class="ws-hero-ctas">
+          <a href="tel:{{ site.phone }}" class="ws-btn ws-btn-primary">{{ icons.icon('phone', 16) }} Call {{ site.phone }}</a>
+          <a href="mailto:{{ site.email }}" class="ws-btn ws-btn-secondary">{{ icons.icon('mail', 16) }} Email</a>
+        </div>
+      </div>
+
+      <div class="ws-hero-badge">
+        {{ icons.icon('mail', 56) }}
+        <div class="ws-hero-badge-label">Let's Talk<br>About Your Needs</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Details Section -->
+<section class="ws-section">
+  <div class="ws-container">
+    <div class="ws-section-header">
+      <div class="ws-eyebrow">Ways to Reach Us</div>
+      <h2>Contact Information</h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; max-width:600px; margin:0 auto;">
+      <div>
+        <h3 style="font-size:1rem; color:var(--ws-text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">Phone</h3>
+        <a href="tel:{{ site.phone }}" style="display:inline-flex; align-items:center; gap:8px; font-size:1.1rem; font-weight:500; color:var(--ws-primary);">
+          {{ icons.icon('phone', 18) }} {{ site.phone }}
+        </a>
+        <p style="color:var(--ws-muted); margin-top:8px; font-size:0.9rem;">Call us about your service request</p>
+      </div>
+
+      <div>
+        <h3 style="font-size:1rem; color:var(--ws-text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">Email</h3>
+        <a href="mailto:{{ site.email }}" style="display:inline-flex; align-items:center; gap:8px; font-size:1.1rem; font-weight:500; color:var(--ws-primary);">
+          {{ icons.icon('mail', 18) }} {{ site.email }}
+        </a>
+        <p style="color:var(--ws-muted); margin-top:8px; font-size:0.9rem;">Email us with questions</p>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:48px; padding:24px; background:var(--ws-bg-muted); border-radius:8px;">
+      <h3>Service Area</h3>
+      <p style="display:inline-flex; align-items:center; gap:8px; margin:12px 0 0 0; font-size:1.05rem;">{{ icons.icon('pin', 18) }} {{ site.service_area }}</p>
+    </div>
+  </div>
+</section>
+
+<!-- Lead Capture Section -->
+<section class="ws-section ws-cta-band">
+  <div class="ws-container">
+    <div class="ws-section-header" style="margin:0 auto; text-align:center;">
+      <div class="ws-eyebrow">Ready to get started?</div>
+      <h2>Tell Us What You Need</h2>
+      <p class="ws-body-text" style="margin:12px auto 0;">Provide your contact information and a short description of what you need.</p>
+    </div>
+
+    <form class="ws-lead-form" action="{{ lead_endpoint }}" method="post">
+      <input type="hidden" name="source_path" value="{{ lead_source_path }}" />
+      <label class="ws-visually-hidden" for="lead-name">Your Name</label>
+      <input type="text" id="lead-name" placeholder="Your Name" name="name" required />
+      <label class="ws-visually-hidden" for="lead-phone">Phone Number</label>
+      <input type="tel" id="lead-phone" placeholder="Phone Number" name="phone" required />
+      <label class="ws-visually-hidden" for="lead-email">Email</label>
+      <input type="email" id="lead-email" placeholder="Email" name="email" required />
+      <label class="ws-visually-hidden" for="lead-message">What do you need?</label>
+      <textarea id="lead-message" placeholder="What do you need?" name="message" required></textarea>
+      <div class="ws-honeypot" aria-hidden="true">
+        <label for="lead-website">Website</label>
+        <input type="text" id="lead-website" name="website" tabindex="-1" autocomplete="off" />
+      </div>
+      <button type="submit" class="ws-btn ws-btn-primary">Submit &rarr;</button>
+      <div class="ws-lead-status" role="status" aria-live="polite"></div>
+    </form>
+
+    <div class="ws-lead-disclaimer">{{ icons.icon('check', 13) }} Your request goes directly to {{ site.biz_name }}</div>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="ws-section ws-section-muted">
+  <div class="ws-container">
+    <div class="ws-section-header">
+      <div class="ws-eyebrow">Questions?</div>
+      <h2>Common Questions</h2>
+    </div>
+
+    <div class="ws-faq-list">
+      <div class="ws-faq-item">
+        <h3>How do I reach you directly?</h3>
+        <p>Call {{ site.phone }} or email {{ site.email }}.</p>
+      </div>
+
+      <div class="ws-faq-item">
+        <h3>What areas do you serve?</h3>
+        <p>{{ site.biz_name }} serves {{ site.service_area }}. Call {{ site.phone }} to confirm we cover your address.</p>
+      </div>
+
+      <div class="ws-faq-item">
+        <h3>How do I schedule a service?</h3>
+        <p>Call {{ site.phone }} directly or use the contact form above to request service.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

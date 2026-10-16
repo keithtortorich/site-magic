@@ -1,0 +1,77 @@
+-- 0004_enable_rls_default_deny.sql
+--
+-- NUMBERING NOTE (WebStaffr 4.0 rebuild): this directory is an append-only
+-- run-log against the one live Supabase project this app has always used
+-- -- it is never renumbered, unlike webstaffr/migrations/'s SQLite-only
+-- files, which WERE renumbered during the 4.0 rebuild (the old repo's
+-- 0001_initial.sql included two tables belonging to an unused workflow
+-- engine that 4.0 does not carry forward; the new 0001_tenants.sql does
+-- not). Those two tables (workflow_definitions, execution_records) still
+-- exist in the live Supabase project from the old app's migrations and
+-- are covered by the RLS statements below regardless -- this file
+-- describes production reality, not 4.0's application-code schema.
+--
+-- Postgres/Supabase-only migration. Enables Row Level Security with no
+-- policies (default-deny) on every table in the public schema, per the
+-- CLAUDE.md session addendum (2026-07-07) describing why: Supabase's own
+-- advisor flagged "RLS Disabled in Public" (ERROR level) on all 5 tables
+-- when this Postgres project was created. Nothing in this codebase uses
+-- Supabase's PostgREST/anon-key API today (the backend connects via a
+-- direct Postgres connection, which bypasses RLS regardless of policy),
+-- so this wasn't exploitable through the current design at the time -- but
+-- a future anon-key/client-side use would otherwise expose every row in
+-- every table.
+--
+-- ============================================================================
+-- DOES NOT LIVE IN webstaffr/migrations/ (the parent directory) ON PURPOSE.
+-- ============================================================================
+-- db.py's migrate() applies every *.sql file directly under
+-- webstaffr/migrations/ against SQLite for local dev and the full test
+-- suite (see that module's docstring) -- ENABLE ROW LEVEL SECURITY is
+-- Postgres-only syntax with no SQLite equivalent, so if this file were a
+-- direct sibling of 0001-0003/0005, it would be picked up by migrate()'s
+-- glob and break every local run and the entire test suite the moment
+-- schema_migrations didn't already have "0004_enable_rls_default_deny"
+-- recorded. Living in this postgres_manual/ subdirectory keeps it outside
+-- migrate()'s (non-recursive) glob("*.sql") entirely.
+--
+-- This migration is NOT run by this app. Apply it manually against the
+-- live Supabase project only -- via the Supabase SQL editor, the Supabase
+-- MCP's apply_migration/execute_sql tools, or the Supabase CLI. This is a
+-- deliberate, documented tradeoff (Postgres/Supabase schema is managed
+-- out-of-band in general, per db.py's module docstring), not an oversight.
+--
+-- ============================================================================
+-- PROVENANCE NOTE (2026-07-08)
+-- ============================================================================
+-- This file was committed after the fact -- a security review found that
+-- this migration existed only in the live Supabase project's
+-- applied-migrations history (recorded there as
+-- "0004_enable_rls_default_deny", applied 2026-07-07), never as a file in
+-- this repo. The Supabase MCP's list_migrations tool returns only
+-- version+name, not the original SQL body, so the statements below are a
+-- reconstruction of the minimal SQL that produces the verified live
+-- state -- not a retrieval of whatever the original session literally
+-- typed. Verified directly before committing, not assumed:
+--   - Queried pg_tables/pg_class: all 5 tables show rowsecurity = true.
+--   - Queried pg_policies: zero policies exist on any public-schema table
+--     (confirming default-deny, not default-allow-with-gaps).
+--   - Re-ran get_advisors(security): only the 5 expected INFO-level
+--     "RLS Enabled No Policy" notices, no ERROR-level findings.
+--   - Re-executed the exact statements below against the live project as
+--     a verification step -- ENABLE ROW LEVEL SECURITY is idempotent (a
+--     no-op on an already-enabled table), so this is safe to have done
+--     and safe to do again if this file is ever reapplied after a project
+--     recreation, which is the entire point of committing it.
+
+ALTER TABLE public.tenants ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.workflow_definitions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.execution_records ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.appointments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.intake_submissions ENABLE ROW LEVEL SECURITY;
+
+-- No CREATE POLICY statements -- this is intentional default-deny.
+-- Nothing queries these tables via PostgREST/anon-key today (see note
+-- above), so there is no policy to write yet. If/when a client-side or
+-- anon-key consumer is ever added, write explicit tenant-scoped policies
+-- here rather than relaxing this to allow-all.
