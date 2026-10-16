@@ -1,0 +1,98 @@
+{% extends "site/base.html" %}
+{% import "site/_icons.html" as icons %}
+{% block content %}
+<!-- Hero Section (New Pattern) -->
+<section class="ws-hero">
+  <div class="ws-container">
+    <div class="ws-hero-grid">
+      <div>
+        <div class="ws-hero-tag">{{ current_service }} • {{ site.service_area }}</div>
+        <h1 class="ws-h1">{{ current_service }} in {{ site.service_area }}</h1>
+        <p class="ws-body-text">Contact {{ site.biz_name }} about {{ current_service.lower() }} in {{ site.service_area }}.{% if site.differentiator %} {{ site.differentiator }}{% endif %}</p>
+
+        {% if site.certifications or has_emergency_service %}
+        <div class="ws-badge-row">
+          {% if site.certifications %}<span class="ws-badge-chip">{{ icons.icon('shield', 14) }} {{ site.certifications }}</span>{% endif %}
+          {% if has_emergency_service %}<span class="ws-badge-chip">{{ icons.icon('bolt', 14) }} 24/7 Emergency Service</span>{% endif %}
+        </div>
+        {% endif %}
+
+        <div class="ws-hero-ctas">
+          <a href="tel:{{ site.phone }}" class="ws-btn {{ 'ws-btn-emergency' if has_emergency_service else 'ws-btn-primary' }}">{{ icons.icon('phone', 16) }} Call {{ site.phone }}</a>
+          <a href="#lead-capture" class="ws-btn ws-btn-secondary">Request Service</a>
+        </div>
+      </div>
+
+      <div class="ws-hero-badge">
+        {{ icons.icon('wrench', 56) }}
+        <div class="ws-hero-badge-label">{{ current_service }}<br>{{ site.service_area }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Service Details Section -->
+<section class="ws-section">
+  <div class="ws-container">
+    <div class="ws-section-header">
+      <div class="ws-eyebrow">Our Service Area</div>
+      <h2>We Serve {{ site.service_area }}</h2>
+    </div>
+
+    <p class="ws-body-text">Call <a href="tel:{{ site.phone }}">{{ site.phone }}</a> to discuss {{ current_service.lower() }} and scheduling.</p>
+  </div>
+</section>
+
+<!-- Lead Capture Section -->
+<section class="ws-section ws-cta-band" id="lead-capture">
+  <div class="ws-container">
+    <div class="ws-section-header" style="margin:0 auto; text-align:center;">
+      <div class="ws-eyebrow">Need this service?</div>
+      <h2>Request {{ current_service }}</h2>
+      <p class="ws-body-text" style="margin:12px auto 0;">Tell us what you need and how to reach you.</p>
+    </div>
+
+    <form class="ws-lead-form" action="{{ lead_endpoint }}" method="post">
+      <input type="hidden" name="service" value="{{ current_service }}" />
+      <input type="hidden" name="source_path" value="{{ lead_source_path }}" />
+      <label class="ws-visually-hidden" for="lead-name">Your Name</label>
+      <input type="text" id="lead-name" placeholder="Your Name" name="name" required />
+      <label class="ws-visually-hidden" for="lead-phone">Phone Number</label>
+      <input type="tel" id="lead-phone" placeholder="Phone Number" name="phone" required />
+      <label class="ws-visually-hidden" for="lead-email">Email</label>
+      <input type="email" id="lead-email" placeholder="Email" name="email" required />
+      <label class="ws-visually-hidden" for="lead-message">What do you need?</label>
+      <textarea id="lead-message" placeholder="What do you need?" name="message" required></textarea>
+      <div class="ws-honeypot" aria-hidden="true">
+        <label for="lead-website">Website</label>
+        <input type="text" id="lead-website" name="website" tabindex="-1" autocomplete="off" />
+      </div>
+      <button type="submit" class="ws-btn ws-btn-primary">Submit Request &rarr;</button>
+      <div class="ws-lead-status" role="status" aria-live="polite"></div>
+    </form>
+
+    <div class="ws-lead-disclaimer">{{ icons.icon('check', 13) }} Your request goes directly to {{ site.biz_name }}</div>
+  </div>
+</section>
+
+<!-- Other Services Section -->
+{% if services|length > 1 %}
+<section class="ws-section ws-section-muted">
+  <div class="ws-container">
+    <div class="ws-section-header">
+      <div class="ws-eyebrow">More Services</div>
+      <h2>Other {{ site.industry }} Services</h2>
+    </div>
+
+    <ul class="ws-service-grid">
+      {% for svc in services %}
+      {% if svc.name != current_service %}
+      <li><a href="{{ site_root }}/services/{{ svc.slug }}">{{ svc.name }}</a></li>
+      {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NetBuild Control Center</title>
+<style>
+  :root{
+    --navy:#1A1A2E; --navy-2:#12121F; --navy-3:#0D0D18;
+    --rust:#C85A28; --rust-2:#A04620; --rust-soft:rgba(200,90,40,.14);
+    --gold:#D4A574; --gold-2:#E8C9A8;
+    --ink:#2B2B2B; --line:rgba(212,165,116,.16);
+    --line-2:rgba(255,255,255,.07);
+    --txt:#F5F5F5; --txt-2:#C7CBD8; --muted:#8A91A6;
+    --ok:#5FB98E; --warn:#E0B252; --bad:#E0705F;
+    --r-lg:20px; --r:14px; --r-sm:10px;
+    --shadow:0 18px 48px -20px rgba(0,0,0,.65);
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:
+      radial-gradient(1100px 560px at 82% -8%, rgba(200,90,40,.18), transparent 60%),
+      radial-gradient(900px 520px at 6% 4%, rgba(212,165,116,.12), transparent 55%),
+      linear-gradient(160deg,#1A1A2E 0%,#12121F 48%,#0D0D18 100%);
+    color:var(--txt); font-family:var(--sans); min-height:100vh;
+    -webkit-font-smoothing:antialiased; letter-spacing:.1px;}
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1240px; margin:0 auto; padding:22px clamp(16px,3vw,34px) 80px;}
+
+  /* top bar */
+  .topbar{display:flex; align-items:center; gap:16px; padding:14px 0 20px; flex-wrap:wrap;}
+  .brand{display:flex; align-items:center; gap:11px;}
+  .mark{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
+    background:linear-gradient(150deg,var(--rust),var(--rust-2)); box-shadow:0 8px 22px -8px rgba(200,90,40,.7);}
+  .mark svg{width:21px;height:21px}
+  .wordmark{font-family:var(--serif); font-weight:700; font-size:19px; line-height:1; letter-spacing:.3px;}
+  .wordmark b{color:var(--rust)}
+  .wordmark i{color:var(--gold); font-style:normal}
+  .wordmark small{display:block; font-family:var(--sans); font-weight:600; font-size:9.5px;
+    letter-spacing:2.6px; color:var(--muted); margin-top:3px;}
+  .spacer{flex:1}
+  .pill{font-size:12px; font-weight:600; padding:7px 13px; border-radius:999px; border:1px solid var(--line);
+    background:rgba(255,255,255,.04); color:var(--txt-2); display:inline-flex; gap:7px; align-items:center;}
+  .pill .dot{width:7px;height:7px;border-radius:50%; background:var(--gold)}
+  .btn{cursor:pointer; border:none; font-family:inherit; font-weight:700; font-size:14px;
+    padding:11px 18px; border-radius:var(--r-sm); transition:.18s; }
+  .btn-primary{background:linear-gradient(150deg,var(--rust),var(--rust-2)); color:#fff;
+    box-shadow:0 12px 26px -12px rgba(200,90,40,.85);}
+  .btn-primary:hover{transform:translateY(-1px); filter:brightness(1.06)}
+  .btn-ghost{background:rgba(255,255,255,.05); color:var(--txt-2); border:1px solid var(--line)}
+  .btn-ghost:hover{background:rgba(255,255,255,.1)}
+  .btn-sm{padding:8px 13px; font-size:12.5px}
+
+  /* hero */
+  .hero{display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; margin:6px 0 22px;}
+  .hero h1{font-family:var(--serif); font-size:clamp(26px,3.4vw,38px); margin:0; font-weight:700; letter-spacing:.2px;}
+  .hero .sub{color:var(--txt-2); margin-top:7px; font-size:14.5px; max-width:560px;}
+  .hero .sub b{color:var(--gold-2); font-weight:700}
+
+  /* kpi grid */
+  .grid{display:grid; gap:16px;}
+  .kpis{grid-template-columns:repeat(6,1fr);}
+  @media(max-width:1080px){.kpis{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .card{background:linear-gradient(165deg,rgba(255,255,255,.055),rgba(255,255,255,.02));
+    border:1px solid var(--line-2); border-radius:var(--r-lg); padding:18px; box-shadow:var(--shadow);
+    position:relative; overflow:hidden;}
+  .card::before{content:""; position:absolute; inset:0 0 auto 0; height:1px;
+    background:linear-gradient(90deg,transparent,rgba(212,165,116,.5),transparent);}
+  .kpi .label{font-size:12px; color:var(--muted); font-weight:600; letter-spacing:.4px; text-transform:uppercase;}
+  .kpi .num{font-family:var(--serif); font-size:34px; font-weight:700; margin-top:8px; line-height:1;}
+  .kpi .meta{font-size:12px; color:var(--txt-2); margin-top:7px;}
+  .kpi .ico{position:absolute; top:16px; right:16px; width:30px;height:30px; border-radius:9px;
+    background:var(--rust-soft); display:grid; place-items:center; color:var(--rust)}
+  .kpi .ico svg{width:17px;height:17px}
+
+  /* two-column layout */
+  .cols{display:grid; grid-template-columns:1.15fr .85fr; gap:16px; margin-top:16px;}
+  @media(max-width:980px){.cols{grid-template-columns:1fr}}
+  .cols-3{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;}
+  @media(max-width:980px){.cols-3{grid-template-columns:1fr}}
+  .sec-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:10px;}
+  .sec-head h2{font-size:16px; margin:0; font-weight:700; letter-spacing:.3px; display:flex; align-items:center; gap:9px;}
+  .sec-head h2 .tag{width:8px;height:8px;border-radius:2px;background:var(--rust); box-shadow:0 0 0 4px var(--rust-soft)}
+  .sec-head .link{font-size:12.5px; color:var(--gold-2); font-weight:600; cursor:pointer}
+
+  /* ROI hero card */
+  .roi{display:flex; gap:22px; align-items:center; flex-wrap:wrap;}
+  .donut{position:relative; width:148px;height:148px; flex:0 0 auto}
+  .donut .center{position:absolute; inset:0; display:grid; place-items:center; text-align:center}
+  .donut .center .v{font-family:var(--serif); font-size:26px; font-weight:700}
+  .donut .center .l{font-size:11px; color:var(--muted); margin-top:2px; letter-spacing:.4px}
+  .roi .copy{flex:1; min-width:220px}
+  .roi .copy .big{font-family:var(--serif); font-size:30px; font-weight:700; color:var(--gold-2)}
+  .roi .copy .note{font-size:12.5px; color:var(--muted); margin-top:8px; line-height:1.5}
+  .roi .copy .est{display:inline-block; margin-top:10px; font-size:11px; font-weight:700; color:var(--warn);
+    background:rgba(224,178,82,.12); border:1px solid rgba(224,178,82,.3); padding:4px 10px; border-radius:999px}
+
+  /* status rows */
+  .kv{display:flex; flex-direction:column; gap:1px}
+  .row{display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--line-2)}
+  .row:last-child{border-bottom:none}
+  .row .k{color:var(--txt-2); font-size:13.5px; display:flex; align-items:center; gap:9px}
+  .row .k .ic{width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.05); display:grid;place-items:center; color:var(--gold)}
+  .row .k .ic svg{width:15px;height:15px}
+  .row .v{font-weight:700; font-size:14px}
+  .status{font-size:12px; font-weight:700; padding:5px 11px; border-radius:999px; display:inline-flex; gap:6px; align-items:center}
+  .status .d{width:7px;height:7px;border-radius:50%}
+  .s-active{background:rgba(95,185,142,.14); color:var(--ok)} .s-active .d{background:var(--ok)}
+  .s-config{background:rgba(224,178,82,.14); color:var(--warn)} .s-config .d{background:var(--warn)}
+  .s-off{background:rgba(224,112,95,.14); color:var(--bad)} .s-off .d{background:var(--bad)}
+  .s-live{background:rgba(95,185,142,.14); color:var(--ok)} .s-live .d{background:var(--ok); box-shadow:0 0 0 0 rgba(95,185,142,.6); animation:pulse 1.8s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(95,185,142,.55)}70%{box-shadow:0 0 0 8px rgba(95,185,142,0)}100%{box-shadow:0 0 0 0 rgba(95,185,142,0)}}
+
+  /* tables */
+  .tbl{display:flex; flex-direction:column}
+  .trow{display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid var(--line-2)}
+  .trow:last-child{border-bottom:none}
+  .trow .av{width:34px;height:34px;border-radius:10px; flex:0 0 auto; display:grid; place-items:center;
+    font-weight:700; color:#fff; background:linear-gradient(150deg,var(--rust),var(--rust-2)); font-size:13px}
+  .trow .main{flex:1; min-width:0}
+  .trow .main .t{font-weight:600; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .trow .main .s{font-size:12px; color:var(--muted); margin-top:2px}
+  .trow .end{text-align:right; font-size:12.5px; color:var(--txt-2); white-space:nowrap}
+  .chip{font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px; border:1px solid var(--line-2); color:var(--txt-2)}
+  .chip.ok{color:var(--ok); border-color:rgba(95,185,142,.35); background:rgba(95,185,142,.1)}
+  .chip.pend{color:var(--warn); border-color:rgba(224,178,82,.35); background:rgba(224,178,82,.1)}
+  .chip.recv{color:var(--gold-2); border-color:rgba(212,165,116,.35); background:rgba(212,165,116,.1)}
+
+  /* activity feed */
+  .feed{display:flex; flex-direction:column; gap:2px; max-height:420px; overflow:auto}
+  .ev{display:flex; gap:12px; padding:10px 0; align-items:flex-start}
+  .ev .eic{width:30px;height:30px;border-radius:9px; flex:0 0 auto; display:grid;place-items:center; background:rgba(255,255,255,.05); color:var(--gold)}
+  .ev .eic svg{width:15px;height:15px}
+  .ev .body{flex:1}
+  .ev .body .et{font-size:13.5px; font-weight:600}
+  .ev .body .es{font-size:12px; color:var(--muted); margin-top:2px}
+  .ev .time{font-size:11px; color:var(--muted); white-space:nowrap}
+
+  /* empty state */
+  .empty{padding:26px 8px; text-align:center; color:var(--muted)}
+  .empty .eic{width:46px;height:46px;border-radius:14px;margin:0 auto 12px; display:grid;place-items:center;
+    background:rgba(255,255,255,.04); color:var(--gold)}
+  .empty .eic svg{width:24px;height:24px}
+  .empty .et{font-weight:700; color:var(--txt-2); font-size:14px}
+  .empty .es{font-size:12.5px; margin-top:5px; max-width:320px; margin-inline:auto; line-height:1.5}
+
+  /* overlay / auth */
+  .overlay{position:fixed; inset:0; background:linear-gradient(160deg,rgba(13,13,24,.97),rgba(18,18,31,.98));
+    display:grid; place-items:center; z-index:50; padding:20px;}
+  .auth{width:min(440px,94vw); background:linear-gradient(165deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+    border:1px solid var(--line-2); border-radius:var(--r-lg); padding:30px; box-shadow:var(--shadow); text-align:center}
+  .auth .brand{justify-content:center; margin-bottom:18px}
+  .auth h2{font-family:var(--serif); font-size:24px; margin:0 0 6px}
+  .auth p{color:var(--txt-2); font-size:13.5px; margin:0 0 20px; line-height:1.55}
+  .field{width:100%; text-align:left; margin-bottom:14px}
+  .field label{font-size:12px; font-weight:600; color:var(--muted); display:block; margin-bottom:7px; letter-spacing:.3px}
+  .field input{width:100%; padding:13px 14px; border-radius:var(--r-sm); border:1px solid var(--line-2);
+    background:rgba(0,0,0,.25); color:#fff; font-family:inherit; font-size:14px; outline:none; transition:.15s}
+  .field input:focus{border-color:var(--rust); box-shadow:0 0 0 3px var(--rust-soft)}
+  .auth .btn{width:100%}
+  .auth .hint{font-size:11.5px; color:var(--muted); margin-top:14px; line-height:1.5}
+  .auth .err{color:var(--bad); font-size:12.5px; margin-top:12px; min-height:16px; font-weight:600}
+  .preview-banner{position:fixed; top:0; left:0; right:0; z-index:40; text-align:center;
+    background:linear-gradient(90deg,var(--rust),var(--rust-2)); color:#fff; font-size:12px; font-weight:700;
+    letter-spacing:.5px; padding:7px; box-shadow:0 6px 20px -8px rgba(200,90,40,.8)}
+
+  .foot{margin-top:34px; text-align:center; color:var(--muted); font-size:12px}
+  .foot b{color:var(--gold-2)}
+  .skeleton{background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.1),rgba(255,255,255,.05));
+    background-size:200% 100%; animation:sk 1.3s infinite; border-radius:7px; height:14px}
+  @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  .hidden{display:none !important}
+</style>
+</head>
+<body
+  data-tenant="{{ tenant_id }}"
+  data-api="{{ api_base }}"
+  data-supabase-url="{{ supabase_url }}"
+  data-supabase-key="{{ supabase_key }}">
+
+<div id="previewBanner" class="preview-banner hidden">SAMPLE PREVIEW — not live data</div>
+
+<!-- AUTH OVERLAY -->
+<div id="authOverlay" class="overlay">
+  <div class="auth">
+    <div class="brand">
+      <div class="mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>
+      </div>
+      <div class="wordmark"><b>NETBUILD</b><i>.PRO</i><small>CONTROL CENTER</small></div>
+    </div>
+    <h2>Your business, at a glance</h2>
+    <p id="authSub">Sign in to see the calls, leads, bookings, and reviews NetBuild is winning for your trade business.</p>
+    <div class="field">
+      <label>Business code</label>
+      <input id="codeInput" placeholder="e.g. a1b2c3d4" autocomplete="off" />
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input id="emailInput" type="email" placeholder="you@yourcompany.com" autocomplete="off" />
+    </div>
+    <button class="btn btn-primary" id="signinBtn">Email me a sign-in link</button>
+    <div class="err" id="authErr"></div>
+    <div class="hint" id="authHint">We'll email a secure magic link. No password needed.<br/>
+      <span id="cfgNote"></span></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="wrap hidden" id="dash">
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>
+      </div>
+      <div class="wordmark"><b>NETBUILD</b><i>.PRO</i><small id="bizCode">CONTROL CENTER</small></div>
+    </div>
+    <div class="spacer"></div>
+    <span class="pill" id="envPill"><span class="dot"></span><span id="envText">Live</span></span>
+    <button class="btn btn-ghost btn-sm" id="signoutBtn">Sign out</button>
+  </div>
+
+  <div class="hero">
+    <div>
+      <h1 id="heroTitle">Welcome back</h1>
+      <div class="sub" id="heroSub">Here's everything NetBuild is doing for <b id="bizName">your business</b> right now.</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" id="refreshBtn">Refresh</button>
+  </div>
+
+  <!-- KPIs -->
+  <div class="grid kpis" id="kpiGrid"></div>
+
+  <!-- ROI + Angel -->
+  <div class="cols">
+    <div class="card">
+      <div class="sec-head"><h2><span class="tag"></span>Return on NetBuild</h2>
+        <span class="link" id="roiLink">How we count this</span></div>
+      <div class="roi">
+        <div class="donut" id="roiDonut">
+          <svg viewBox="0 0 36 36" width="148" height="148">
+            <path class="ring-bg" d="M18 2.5a15.5 15.5 0 1 1 0 31 15.5 15.5 0 0 1 0-31" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/>
+            <path id="roiArc" d="M18 2.5a15.5 15.5 0 1 1 0 31 15.5 15.5 0 0 1 0-31" fill="none" stroke="url(#g)" stroke-width="4" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90 18 18)"/>
+            <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C85A28"/><stop offset="1" stop-color="#D4A574"/></linearGradient></defs>
+          </svg>
+          <div class="center"><div class="v" id="roiPct">0%</div><div class="l">booked</div></div>
+        </div>
+        <div class="copy">
+          <div class="big" id="roiValue">$0</div>
+          <div class="note" id="roiNote">Estimated value of jobs NetBuild's voice agent and site have put on your calendar.</div>
+          <span class="est" id="roiEst">ESTIMATE</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-head"><h2><span class="tag"></span>Your NetBuild Agent</h2></div>
+      <div class="kv" id="angelKV"></div>
+    </div>
+  </div>
+
+  <!-- Site + Reviews -->
+  <div class="cols">
+    <div class="card">
+      <div class="sec-head"><h2><span class="tag"></span>Your Website</h2>
+        <span class="link" id="siteLink">Open site</span></div>
+      <div class="kv" id="siteKV"></div>
+    </div>
+    <div class="card">
+      <div class="sec-head"><h2><span class="tag"></span>Reviews & Reputation</h2></div>
+      <div class="kv" id="reviewKV"></div>
+    </div>
+  </div>
+
+  <!-- Activity -->
+  <div class="card" style="margin-top:16px">
+    <div class="sec-head"><h2><span class="tag"></span>Recent Activity</h2>
+      <span class="link" id="actLink">Live</span></div>
+    <div class="feed" id="activityFeed"></div>
+  </div>
+
+  <div class="foot">NetBuild.Pro <b>Control Center</b> &middot; built for trade businesses &middot; numbers reflect real activity only</div>
+</div>
+
+<script>
+window.NB = {
+  tenantId: document.body.dataset.tenant || "",
+  apiBase: document.body.dataset.api || "",
+  supabaseUrl: document.body.dataset.supabaseUrl || "",
+  supabaseKey: document.body.dataset.supabaseKey || ""
+};
+</script>
+<script>
+/* ---- icons (inline svg strings) ---- */
+const I = {
+  phone:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  lead:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>',
+  star:'<path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/>',
+  doc:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>',
+  bot:'<rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4M8 16h.01M16 16h.01"/>',
+  globe:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  user:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  wrench:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6z"/>'
+};
+function svg(p, cls){return '<svg class="'+(cls||'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+(p||'')+'</svg>';}
+function el(html){const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstChild;}
+
+/* ---- helpers ---- */
+function money(n){return '$'+Math.round(n).toLocaleString('en-US');}
+function rel(ts){
+  if(!ts) return '';
+  const d=new Date(ts); if(isNaN(d)) return '';
+  const s=(Date.now()-d.getTime())/1000;
+  if(s<60) return 'just now';
+  if(s<3600) return Math.floor(s/60)+'m ago';
+  if(s<86400) return Math.floor(s/3600)+'h ago';
+  if(s<2592000) return Math.floor(s/86400)+'d ago';
+  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+function esc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function initials(name){if(!name) return '?'; const p=String(name).trim().split(/\s+/); return ((p[0]||'')[0]||'?').toUpperCase()+(p[1]?p[1][0].toUpperCase():'');}
+
+/* ---- sample preview data (clearly labeled, never real) ---- */
+const SAMPLE = {
+  tenant_id:"sample", business:{biz_name:"Apex Plumbing Co.", industry:"Plumbing", service_area:"Phoenix Metro, AZ", plan:"office_staff", tagline:"Fast, honest plumbing.", onboarded_at:new Date(Date.now()-86400e3*42).toISOString()},
+  kpis:{calls_received:184, calls_completed:171, appointments_booked:47, appointments_upcoming:6, appointments_total:47, leads_received:63, reviews_received:38, review_avg_rating:4.8, review_responses_pending:3, quotes_pending:5, quotes_accepted:19},
+  roi:{appointments_booked:47, estimated_value_usd:11750, estimated_value_note:"Estimate only, at $250/booked appointment -- not a measured figure."},
+  site:{job_id:"jb_sample", status:"published", published_url:"https://apex.example.com", updated_at:new Date(Date.now()-86400e3*3).toISOString()},
+  angel:{status:"active", tracking_number_present:true, calls_fielded:184},
+  activity:[
+    {type:"call", timestamp:new Date(Date.now()-36e5*2).toISOString(), payload:{event_type:"call_received", outcome:"booked"}},
+    {type:"appointment", timestamp:new Date(Date.now()-36e5*5).toISOString(), payload:{contact_name:"Marcus T.", starts_at:new Date(Date.now()+86400e3*2).toISOString(), source:"angel"}},
+    {type:"lead", timestamp:new Date(Date.now()-36e5*9).toISOString(), payload:{name:"Dana R.", service:"Water heater", status:"forwarded"}},
+    {type:"review", timestamp:new Date(Date.now()-86400e3*1.1).toISOString(), payload:{review_source:"google", review_rating:5, response_status:"pending_draft"}},
+    {type:"quote", timestamp:new Date(Date.now()-86400e3*1.6).toISOString(), payload:{contact_name:"Leo P.", status:"accepted"}},
+    {type:"site", timestamp:new Date(Date.now()-86400e3*3).toISOString(), payload:{job_id:"jb_sample", status:"published"}}
+  ]
+};
+
+/* ---- render ---- */
+function statusPill(kind){
+  if(kind==='active'||kind==='live') return '<span class="status s-active"><span class="d"></span>Active</span>';
+  if(kind==='configured') return '<span class="status s-config"><span class="d"></span>Configured</span>';
+  return '<span class="status s-off"><span class="d"></span>Not set up</span>';
+}
+function render(data){
+  document.getElementById('bizCode').textContent = (data.business && data.business.biz_name ? data.business.biz_name.toUpperCase() : 'CONTROL CENTER');
+  const name = (data.business && data.business.biz_name) ? data.business.biz_name : 'your business';
+  document.getElementById('heroTitle').textContent = data.business ? 'Welcome, '+(data.business.biz_name.split(' ')[0]) : 'Welcome back';
+  document.getElementById('bizName').textContent = name;
+  document.getElementById('heroSub').innerHTML = "Here's everything NetBuild is doing for <b>"+esc(name)+"</b> right now.";
+
+  /* KPIs */
+  const k=data.kpis;
+  const kpis=[
+    {label:'Calls received', num:k.calls_received, ico:I.phone, meta:'through your NetBuild line'},
+    {label:'Calls answered', num:k.calls_completed, ico:I.check, meta:'by your voice agent'},
+    {label:'Booked jobs', num:k.appointments_booked, ico:I.cal, meta:k.appointments_upcoming+' coming up'},
+    {label:'Leads captured', num:k.leads_received, ico:I.lead, meta:'from your website'},
+    {label:'Reviews', num:k.reviews_received, ico:I.star, meta:k.review_avg_rating?('avg '+k.review_avg_rating+'★'):'no ratings yet'},
+    {label:'Quotes', num:(k.quotes_pending+k.quotes_accepted), ico:I.doc, meta:k.quotes_accepted+' accepted'}
+  ];
+  const kg=document.getElementById('kpiGrid'); kg.innerHTML='';
+  kpis.forEach(x=>{
+    kg.appendChild(el('<div class="card kpi"><div class="ico">'+svg(x.ico)+'</div>'+
+      '<div class="label">'+x.label+'</div><div class="num">'+(x.num||0)+'</div>'+
+      '<div class="meta">'+(x.meta||'')+'</div></div>'));
+  });
+
+  /* ROI donut: appointments booked vs calls received */
+  const total = Math.max(1, k.calls_received);
+  const booked = k.appointments_booked||0;
+  const pct = Math.min(100, Math.round(booked/total*100));
+  const arc=document.getElementById('roiArc');
+  const circ=2*Math.PI*15.5;
+  arc.setAttribute('stroke-dasharray', (circ*pct/100).toFixed(2)+' '+(circ).toFixed(2));
+  document.getElementById('roiPct').textContent = pct+'%';
+  document.getElementById('roiValue').textContent = money(data.roi.estimated_value_usd||0);
+  document.getElementById('roiNote').textContent = (data.roi.estimated_value_note||'Estimated value of booked jobs.');
+
+  /* Angel */
+  const a=data.angel||{status:'not_configured',calls_fielded:0,tracking_number_present:false};
+  const ak=document.getElementById('angelKV'); ak.innerHTML='';
+  const arows=[
+    {k:'Status', v:statusPill(a.status==='active'?'active':a.status==='configured'?'configured':'off'), ic:I.bot},
+    {k:'Calls fielded', v:(a.calls_fielded||0).toLocaleString(), ic:I.phone},
+    {k:'Tracking line', v:a.tracking_number_present?'Provisioned':'Not yet', ic:I.wrench}
+  ];
+  arows.forEach(r=>ak.appendChild(el('<div class="row"><div class="k"><span class="ic">'+svg(r.ic)+'</span>'+r.k+'</div><div class="v">'+r.v+'</div></div>')));
+
+  /* Site */
+  const s=data.site;
+  const sk=document.getElementById('siteKV'); sk.innerHTML='';
+  if(s && s.status){
+    const stMap={published:['live','Live','s-live'], building:['config','Building…','s-config'], queued:['config','Queued','s-config'], failed:['off','Failed','s-off']};
+    const m=stMap[s.status]||['config', s.status, 's-config'];
+    sk.appendChild(el('<div class="row"><div class="k"><span class="ic">'+svg(I.globe)+'</span>Your site</div><div class="v"><span class="status '+m[2]+'"><span class="d"></span>'+m[1]+'</span></div></div>'));
+    if(s.published_url) sk.appendChild(el('<div class="row"><div class="k"><span class="ic">'+svg(I.globe)+'</span>Live at</div><div class="v" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><a class="chip recv" href="'+esc(s.published_url)+'" target="_blank" rel="noopener">'+esc(s.published_url.replace(/^https?:\/\//,''))+'</a></div></div>'));
+  } else {
+    sk.appendChild(el('<div class="empty"><div class="eic">'+svg(I.globe)+'</div><div class="et">Site not built yet</div><div class="es">Your NetBuild site generates automatically after intake. Check back soon.</div></div>'));
+  }
+
+  /* Reviews */
+  const rv=data.kpis||{};
+  const rk=document.getElementById('reviewKV'); rk.innerHTML='';
+  const rrows=[
+    {k:'Reviews collected', v:(rv.reviews_received||0).toLocaleString(), ic:I.star},
+    {k:'Average rating', v:(rv.review_avg_rating?rv.review_avg_rating+'★':'--'), ic:I.star},
+    {k:'Responses pending', v:(rv.review_responses_pending||0).toLocaleString(), ic:I.bell}
+  ];
+  rrows.forEach(r=>rk.appendChild(el('<div class="row"><div class="k"><span class="ic">'+svg(r.ic)+'</span>'+r.k+'</div><div class="v">'+r.v+'</div></div>')));
+  if(!rv.reviews_received) rk.appendChild(el('<div class="empty" style="padding-top:8px"><div class="es">No reviews collected yet. NetBuild requests these after each job.</div></div>'));
+
+  /* Activity */
+  renderActivity(data.activity||[]);
+}
+
+function renderActivity(items){
+  const f=document.getElementById('activityFeed'); f.innerHTML='';
+  if(!items.length){ f.appendChild(el('<div class="empty"><div class="eic">'+svg(I.bell)+'</div><div class="et">Nothing here yet</div><div class="es">Calls, leads, bookings, and reviews will show up here as NetBuild works for you.</div></div>')); return; }
+  const map={
+    call:function(p){const o=p.outcome||''; const e=p.event_type==='call_received'?'Incoming call':'Call ended'; const s=o?('· '+o.charAt(0).toUpperCase()+o.slice(1)):''; return {ic:I.phone, t:e, s:'Voice agent'+(s?' '+s:'')};},
+    appointment:function(p){return {ic:I.cal, t:'Appointment booked', s:(p.contact_name||'Customer')+(p.starts_at?(' · '+rel(p.starts_at)+' out'):'')};},
+    lead:function(p){return {ic:I.lead, t:'New website lead', s:(p.name||'Someone')+(p.service?(' · '+p.service):'')};},
+    review:function(p){return {ic:I.star, t:'Review received', s:(p.review_source||'')+(p.review_rating?(' · '+p.review_rating+'★'):'')};},
+    quote:function(p){return {ic:I.doc, t:'Quote '+(p.status||''), s:p.contact_name||''};},
+    site:function(p){return {ic:I.globe, t:'Site update', s:'Build '+(p.status||'')};}
+  };
+  items.forEach(it=>{
+    const fn=map[it.type]; if(!fn) return; const r=fn(it.payload||{});
+    f.appendChild(el('<div class="ev"><div class="eic">'+svg(r.ic)+'</div><div class="body"><div class="et">'+esc(r.t)+'</div><div class="es">'+esc(r.s)+'</div></div><div class="time">'+rel(it.timestamp)+'</div></div>'));
+  });
+}
+
+/* ---- data load ---- */
+async function loadTenant(){
+  const code = window.NB.tenantId || document.getElementById('codeInput').value.trim();
+  if(!code){ showAuth('Enter your business code.'); return; }
+  window.NB.tenantId = code;
+  try{
+    const res = await fetch(window.NB.apiBase+'/tenants/'+encodeURIComponent(code)+'/dashboard-data', {
+      headers:{'Authorization':'Bearer '+ (window.__nbToken||'')}
+    });
+    if(res.status===401 || res.status===403){ showAuth('Session expired. Please sign in again.'); return; }
+    if(res.status===404){ render({tenant_id:code, kpis:{}, roi:{}, angel:{status:'not_configured'}, activity:[]}); openDash(); return; }
+    if(!res.ok){ showAuth('Could not load dashboard (HTTP '+res.status+').'); return; }
+    const data = await res.json();
+    render(data); openDash();
+  }catch(e){ showAuth('Network error loading dashboard.'); }
+}
+function openDash(){ document.getElementById('authOverlay').classList.add('hidden'); document.getElementById('dash').classList.remove('hidden'); }
+
+/* ---- preview mode ---- */
+function previewMode(){
+  document.getElementById('previewBanner').classList.remove('hidden');
+  document.getElementById('authOverlay').classList.add('hidden');
+  document.getElementById('envText').textContent='Sample preview';
+  document.getElementById('envPill').querySelector('.dot').style.background='var(--gold)';
+  render(SAMPLE); openDash();
+}
+
+/* ---- auth ---- */
+function showAuth(msg){ const o=document.getElementById('authOverlay'); o.classList.remove('hidden'); document.getElementById('dash').classList.add('hidden'); if(msg) document.getElementById('authErr').textContent=msg; }
+function initAuthUI(){
+  const cfgNote=document.getElementById('cfgNote');
+  const hasSup = window.NB.supabaseUrl && window.NB.supabaseKey;
+  if(!hasSup){ cfgNote.textContent='Sign-in is not configured in this environment yet — use the preview to see the design.'; }
+  document.getElementById('signinBtn').addEventListener('click', async ()=>{
+    const code=document.getElementById('codeInput').value.trim();
+    const email=document.getElementById('emailInput').value.trim();
+    const err=document.getElementById('authErr'); err.textContent='';
+    if(!code){ err.textContent='Enter your business code.'; return; }
+    if(!hasSup){ previewMode(); return; }
+    if(!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ err.textContent='Enter a valid email.'; return; }
+    try{
+      const { createClient } = window.supabase;
+      const sb = createClient(window.NB.supabaseUrl, window.NB.supabaseKey);
+      const { error } = await sb.auth.signInWithOtp({ email, options:{ data:{ tenant_code:code } } });
+      if(error) throw error;
+      err.style.color='var(--ok)'; err.textContent='Check your email for a secure sign-in link.';
+    }catch(e){ err.textContent='Sign-in failed: '+(e.message||e); }
+  });
+  document.getElementById('signoutBtn').addEventListener('click', ()=>{ try{ window.supabase&&window.supabase.auth&&window.supabase.auth.signOut&&window.supabase.auth.signOut(); }catch(e){} window.__nbToken=''; showAuth('Signed out.'); });
+  document.getElementById('refreshBtn').addEventListener('click', ()=>{ if(window.NB.tenantId) loadTenant(); });
+}
+
+/* ---- boot ---- */
+window.addEventListener('DOMContentLoaded', ()=>{
+  initAuthUI();
+  const params=new URLSearchParams(location.search);
+  if(params.get('preview')==='1'){ previewMode(); return; }
+  if(window.NB.tenantId){ /* direct link to /tenants/{id}/dashboard */
+    const hasSup = window.NB.supabaseUrl && window.NB.supabaseKey;
+    if(hasSup && window.supabase && window.supabase.auth){
+      window.supabase.auth.getSession().then(({data})=>{
+        if(data && data.session && data.session.access_token){ window.__nbToken=data.session.access_token; loadTenant(); }
+        else showAuth();
+      });
+    } else { showAuth(); }
+  } else { showAuth(); }
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+</body>
+</html>

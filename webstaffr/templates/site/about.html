@@ -1,0 +1,129 @@
+{% extends "site/base.html" %}
+{% import "site/_icons.html" as icons %}
+{% block content %}
+<!-- Hero Section (New Pattern) -->
+<section class="ws-hero">
+  <div class="ws-container">
+    <div class="ws-hero-grid">
+      <div>
+        <div class="ws-hero-tag">About Us</div>
+        <h1 class="ws-h1">{{ site.biz_name }}</h1>
+        
+        {% if site.years_in_biz %}
+        <p class="ws-body-text">Serving {{ site.service_area }} for {{ site.years_in_biz }} years.</p>
+        {% else %}
+        <p class="ws-body-text">{{ site.biz_name }} provides {{ site.industry | lower }} services in {{ site.service_area }}.</p>
+        {% endif %}
+
+        {% if site.differentiator %}
+        <p class="ws-body-text">{{ site.differentiator }}</p>
+        {% endif %}
+
+        {% if site.certifications or has_emergency_service %}
+        <div class="ws-badge-row">
+          {% if site.certifications %}<span class="ws-badge-chip">{{ icons.icon('shield', 14) }} {{ site.certifications }}</span>{% endif %}
+          {% if has_emergency_service %}<span class="ws-badge-chip">{{ icons.icon('bolt', 14) }} 24/7 Emergency Service</span>{% endif %}
+        </div>
+        {% endif %}
+
+        <div class="ws-hero-ctas">
+          <a href="tel:{{ site.phone }}" class="ws-btn ws-btn-primary">{{ icons.icon('phone', 16) }} Call {{ site.phone }}</a>
+          <a href="{{ site_root }}/contact" class="ws-btn ws-btn-secondary">Request Service</a>
+        </div>
+      </div>
+
+      <div class="ws-hero-badge">
+        {{ icons.icon('briefcase', 56) }}
+        <div class="ws-hero-badge-label">{{ site.years_in_biz if site.years_in_biz else 'Trusted' }}<br>{{ 'Years' if site.years_in_biz else 'Partner' }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust Signals Section -->
+{% if show_about_trust_bar %}
+<section class="ws-trust-grid">
+  <div class="ws-container">
+    {% if site.years_in_biz %}
+    <div class="ws-trust-item">
+      <div class="ws-trust-icon">{{ icons.icon('clock', 20) }}</div>
+      <div class="ws-trust-num">{{ site.years_in_biz }}+</div>
+      <div class="ws-trust-label">Years Serving {{ site.service_area }}</div>
+    </div>
+    {% endif %}
+    {% if site.certifications %}
+    <div class="ws-trust-item">
+      <div class="ws-trust-icon">{{ icons.icon('shield', 20) }}</div>
+      <div class="ws-trust-num">Credentials</div>
+      <div class="ws-trust-label">{{ site.certifications }}</div>
+    </div>
+    {% endif %}
+    {% if has_emergency_service %}
+    <div class="ws-trust-item">
+      <div class="ws-trust-icon">{{ icons.icon('bolt', 20) }}</div>
+      <div class="ws-trust-num">24/7</div>
+      <div class="ws-trust-label">Emergency Service</div>
+    </div>
+    {% endif %}
+    {% if site.rating_value and site.review_count %}
+    <div class="ws-trust-item">
+      <div class="ws-trust-icon">{{ icons.icon('star', 20) }}</div>
+      <div class="ws-trust-num">{{ site.rating_value }} / 5</div>
+      <div class="ws-trust-label">{{ site.review_count }}+ Reviews</div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+<!-- Why Choose Us Section -->
+{% if site.differentiator or has_emergency_service or site.certifications %}
+<section class="ws-section">
+  <div class="ws-container">
+    <div class="ws-section-header">
+      <div class="ws-eyebrow">Why Choose Us</div>
+      <h2>What Customers Appreciate</h2>
+    </div>
+
+    <div class="ws-reasons-grid">
+      {% if site.differentiator %}
+      <div class="ws-reason-card">
+        <span class="ws-reason-icon">{{ icons.icon('star', 26) }}</span>
+        <h3>What Sets Us Apart</h3>
+        <p>{{ site.differentiator }}</p>
+      </div>
+      {% endif %}
+      {% if has_emergency_service %}
+      <div class="ws-reason-card">
+        <span class="ws-reason-icon">{{ icons.icon('bolt', 26) }}</span>
+        <h3>24/7 Emergency Service</h3>
+        <p>We're available around the clock for {{ site.industry | lower }} emergencies in {{ site.service_area }}.</p>
+      </div>
+      {% endif %}
+      {% if site.certifications %}
+      <div class="ws-reason-card">
+        <span class="ws-reason-icon">{{ icons.icon('shield', 26) }}</span>
+        <h3>Credentials</h3>
+        <p>{{ site.certifications }}</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Contact Section -->
+<section class="ws-section ws-cta-band">
+  <div class="ws-container">
+    <div class="ws-section-header" style="margin:0 auto; text-align:center;">
+      <h2>Get in Touch</h2>
+      <p class="ws-body-text">Have a question? Want to schedule a service? We'd love to hear from you.</p>
+    </div>
+
+    <div style="text-align:center; margin-top:24px;">
+      <a href="tel:{{ site.phone }}" class="ws-btn ws-btn-primary">{{ icons.icon('phone', 16) }} Call {{ site.phone }}</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

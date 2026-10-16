@@ -1,0 +1,21 @@
+{% extends "site/base.html" %}
+{% block content %}
+<section class="ws-hero ws-hero-sub">
+  <div class="ws-hero-inner">
+    <h1>{{ site.biz_name }} Reviews</h1>
+    <p class="ws-rating">{{ site.rating_value }} / 5 &middot; {{ site.review_count }} reviews</p>
+  </div>
+</section>
+
+{% if site.testimonials %}
+<section class="ws-section">
+  <p class="ws-testimonials">{{ site.testimonials }}</p>
+</section>
+{% endif %}
+
+{% if site.google_review_link %}
+<section class="ws-section ws-section-muted">
+  <p><a href="{{ site.google_review_link }}">Leave us a review</a></p>
+</section>
+{% endif %}
+{% endblock %}

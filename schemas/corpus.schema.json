@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:sitemagic:schema:hvac-corpus:1.0.0",
+  "title": "HVAC survey corpus",
+  "description": "Phase 0 candidate and selected-domain corpus. Selection is based on geo-located SERP evidence; extraction is performed only after this corpus is approved.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "surveyRunId",
+    "generatedAt",
+    "metros",
+    "queryFamilies",
+    "crawlPolicy",
+    "selectionPolicy",
+    "candidates"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "surveyRunId": { "$ref": "#/$defs/slug" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "metros": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": { "enum": ["phoenix", "chicago", "dallas_fort_worth"] }
+    },
+    "queryFamilies": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": { "enum": ["hvac-contractor", "ac-repair", "furnace-repair", "emergency-hvac"] }
+    },
+    "crawlPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["robotsTxtRequired", "delayMs", "concurrency", "screenshotsOutsideProductRepo"],
+      "properties": {
+        "robotsTxtRequired": { "const": true },
+        "delayMs": { "const": 2000 },
+        "concurrency": { "const": 2 },
+        "screenshotsOutsideProductRepo": { "const": true },
+        "screenshotDirectory": { "type": "string", "pattern": "(^|/)private-research(/|$)" }
+      }
+    },
+    "selectionPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "minimumIndependentSites",
+        "maximumIndependentSites",
+        "minimumIndependentSitesPerMetro",
+        "maximumIndependentSitesPerMetro",
+        "holdoutSiteCount",
+        "holdoutMustIncludeEachMetro",
+        "paidPlacementsExcluded",
+        "directoriesExcluded",
+        "aggregatorsExcluded",
+        "duplicatesExcluded"
+      ],
+      "properties": {
+        "minimumIndependentSites": { "const": 12 },
+        "maximumIndependentSites": { "const": 15 },
+        "minimumIndependentSitesPerMetro": { "const": 4 },
+        "maximumIndependentSitesPerMetro": { "const": 5 },
+        "holdoutSiteCount": { "type": "integer", "minimum": 3, "maximum": 4 },
+        "holdoutMustIncludeEachMetro": { "const": true },
+        "paidPlacementsExcluded": { "const": true },
+        "directoriesExcluded": { "const": true },
+        "aggregatorsExcluded": { "const": true },
+        "duplicatesExcluded": { "const": true },
+        "franchisesAreControlsOnly": { "const": true }
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/candidate" }
+    }
+  },
+  "$defs": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "maxLength": 100
+    },
+    "metro": {
+      "enum": ["phoenix", "chicago", "dallas_fort_worth"]
+    },
+    "queryFamily": {
+      "enum": ["hvac-contractor", "ac-repair", "furnace-repair", "emergency-hvac"]
+    },
+    "serpCollection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "locationCode",
+        "locationName",
+        "device",
+        "language",
+        "query",
+        "observedAt",
+        "organicPosition",
+        "resultType",
+        "resultUrl"
+      ],
+      "properties": {
+        "provider": {
+          "enum": ["dataforseo", "serpapi", "zenserp", "geo-matched-vpn-browser"]
+        },
+        "locationCode": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "locationName": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "device": { "enum": ["desktop", "mobile"] },
+        "language": { "type": "string", "minLength": 2, "maxLength": 20 },
+        "query": { "type": "string", "minLength": 3, "maxLength": 200 },
+        "observedAt": { "type": "string", "format": "date-time" },
+        "organicPosition": { "type": ["integer", "null"], "minimum": 1 },
+        "resultType": { "enum": ["organic", "paid", "local-pack", "directory", "aggregator", "other"] },
+        "resultUrl": { "type": "string", "format": "uri" }
+      }
+    },
+    "exclusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reason", "evidenceRefs"],
+      "properties": {
+        "reason": {
+          "enum": [
+            "paid-placement",
+            "directory",
+            "aggregator",
+            "duplicate-domain",
+            "duplicate-brand",
+            "outside-metro",
+            "not-contractor",
+            "inaccessible",
+            "insufficient-evidence",
+            "other"
+          ]
+        },
+        "details": { "type": "string", "maxLength": 300 },
+        "evidenceRefs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/slug" }
+        }
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidateId",
+        "domain",
+        "companyName",
+        "metro",
+        "franchiseControl",
+        "serpCollection",
+        "classification",
+        "split"
+      ],
+      "properties": {
+        "candidateId": { "$ref": "#/$defs/slug" },
+        "domain": { "type": "string", "format": "hostname" },
+        "companyName": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "metro": { "$ref": "#/$defs/metro" },
+        "franchiseControl": { "type": "boolean" },
+        "serpCollection": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/serpCollection" }
+        },
+        "classification": { "enum": ["independent", "franchise", "excluded"] },
+        "split": { "enum": ["training", "holdout", "excluded"] },
+        "exclusion": { "$ref": "#/$defs/exclusion" },
+        "canonicalDomain": { "type": "string", "format": "hostname" },
+        "notes": { "type": "string", "maxLength": 500 }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "classification": { "const": "excluded" } },
+            "required": ["classification"]
+          },
+          "then": {
+            "required": ["exclusion"],
+            "properties": { "split": { "const": "excluded" } }
+          },
+          "else": { "not": { "required": ["exclusion"] } }
+        },
+        {
+          "if": {
+            "properties": { "classification": { "const": "franchise" } },
+            "required": ["classification"]
+          },
+          "then": {
+            "properties": {
+              "franchiseControl": { "const": true },
+              "split": { "const": "excluded" }
+            }
+          },
+          "else": {
+            "properties": { "franchiseControl": { "const": false } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "split": { "enum": ["training", "holdout"] } },
+            "required": ["split"]
+          },
+          "then": {
+            "properties": { "classification": { "enum": ["independent", "franchise"] } }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="400" height="100">
+  <!-- SPLIT VERSION: Gray "Web" + Gold "Staffr" -->
+  <text x="0" y="68"
+        font-family="'Garamond', 'EB Garamond', 'Georgia', serif"
+        font-size="64"
+        font-weight="700"
+        font-style="italic"
+        fill="#999999">
+    Web
+  </text>
+  <text x="147" y="68"
+        font-family="'Garamond', 'EB Garamond', 'Georgia', serif"
+        font-size="64"
+        font-weight="700"
+        font-style="italic"
+        fill="#bf9000">
+    Staffr
+  </text>
+</svg>
