@@ -1,0 +1,282 @@
+{% extends "site/base.html" %}
+{% import "site/_icons.html" as icons %}
+{% block content %}
+<!-- Hero Section -->
+<section class="ws-hero">
+  <div class="ws-container">
+    <div class="ws-hero-grid">
+      <div>
+        <div class="ws-hero-tag">{{ site.industry | title }} in {{ site.service_area }}</div>
+        <h1 class="ws-h1">{{ site.tagline }}</h1>
+        <p class="ws-body-text">Contact {{ site.biz_name }} to discuss your {{ site.industry | lower }} service needs.</p>
+
+        <div class="ws-hero-features">
+          {% if site.certifications %}<span>{{ site.certifications }}</span>{% endif %}
+          {% if has_emergency_service %}<span>24/7 Emergency Service</span>{% endif %}
+          {% if shows_pricing %}<span>Pricing Information Available</span>{% endif %}
+        </div>
+
+        {% if site.years_in_biz or site.rating_value %}
+        <div class="ws-hero-stats">
+          {% if site.years_in_biz %}
+          <div>
+            <div class="ws-stat-num">{{ site.years_in_biz }}yr</div>
+            <div class="ws-stat-label">Experience</div>
+          </div>
+          {% endif %}
+          {% if site.rating_value %}
+          <div>
+            <div class="ws-stat-num">{{ site.rating_value }}★</div>
+            <div class="ws-stat-label">Rating</div>
+          </div>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        {% if site.certifications or has_emergency_service %}
+        <div class="ws-badge-row">
+          {% if site.certifications %}<span class="ws-badge-chip">{{ icons.icon('shield', 14) }} {{ site.certifications }}</span>{% endif %}
+          {% if has_emergency_service %}<span class="ws-badge-chip">{{ icons.icon('bolt', 14) }} 24/7 Emergency Service</span>{% endif %}
+        </div>
+        {% endif %}
+
+        <div class="ws-hero-ctas">
+          <a href="tel:{{ site.phone }}" class="ws-btn {{ 'ws-btn-emergency' if has_emergency_service else 'ws-btn-primary' }}">{{ icons.icon('phone', 16) }} Call {{ site.phone }}</a>
+          <a href="#lead-capture" class="ws-btn ws-btn-secondary">Request Service</a>
+        </div>
+      </div>
+
+      <div class="ws-hero-badge">
+        {{ icons.icon('shield', 56) }}
+        <div class="ws-hero-badge-label">{{ site.industry }}<br>{{ site.service_area }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust Bar (show only if ≥2 trust signals to avoid empty grid cells) -->
+{% if show_trust_bar %}
+<section class="ws-trust-grid">
+  <div class="ws-container">
+    {% if site.rating_value and site.review_count %}
+    <div class="ws-trust-item">
+      <div class="ws-trust-icon">{{ icons.icon('star', 20) }}</div>
+      <div class="ws-trust-num">{{ site.rating_value }} / 5</div>
+      <div class="ws-trust-label">{{ site.review_count }}+ Reviews</div>
+    </div>
+    {% endif %}
+    {% if site.certifications %}
+    <div class="ws-trust-item">
+      <div class="ws-trust-icon">{{ icons.icon('shield', 20) }}</div>
+      <div class="ws-trust-num">Credentials</div>
+      <div class="ws-trust-label">{{ site.certifications }}</div>
+    </div>
+    {% endif %}
+    {% if has_emergency_service %}
+    <div class="ws-trust-item">
+      <div class="ws-trust-icon">{{ icons.icon('clock', 20) }}</div>
+      <div class="ws-trust-num">24/7</div>
+      <div class="ws-trust-label">Emergency Service</div>
+    </div>
+    {% endif %}
+    {% if shows_pricing %}
+    <div class="ws-trust-item">
+      <div class="ws-trust-icon">{{ icons.icon('dollar', 20) }}</div>
+      <div class="ws-trust-num">Pricing</div>
+      <div class="ws-trust-label">Information Available</div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+<!-- Why Us Section -->
+{% if site.differentiator or has_emergency_service or site.certifications %}
+<section class="ws-section">
+  <div class="ws-container">
+    <div class="ws-section-header">
+      <div class="ws-eyebrow">Why {{ site.biz_name }}</div>
+      <h2>Why Customers Choose Us</h2>
+    </div>
+
+    <div class="ws-reasons-grid">
+      {% if site.differentiator %}
+      <div class="ws-reason-card">
+        <span class="ws-reason-icon">{{ icons.icon('star', 26) }}</span>
+        <h3>What Sets Us Apart</h3>
+        <p>{{ site.differentiator }}</p>
+      </div>
+      {% endif %}
+      {% if has_emergency_service %}
+      <div class="ws-reason-card">
+        <span class="ws-reason-icon">{{ icons.icon('clock', 26) }}</span>
+        <h3>24/7 Emergency Service</h3>
+        <p>We're available around the clock for {{ site.industry | lower }} emergencies in {{ site.service_area }}.</p>
+      </div>
+      {% endif %}
+      {% if site.certifications %}
+      <div class="ws-reason-card">
+        <span class="ws-reason-icon">{{ icons.icon('wrench', 26) }}</span>
+        <h3>Credentials</h3>
+        <p>{{ site.certifications }}</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Common Questions (objection-handling FAQ) -->
+<section class="ws-section ws-section-muted">
+  <div class="ws-container">
+    <div class="ws-section-header">
+      <div class="ws-eyebrow">Common Questions</div>
+      <h2>What to Know Before You Call</h2>
+    </div>
+
+    <div class="ws-faq-list">
+      <div class="ws-faq-item">
+        <h3>What areas do you serve?</h3>
+        <p>{{ site.biz_name }} serves {{ site.service_area }}. Call {{ site.phone }} to confirm we cover your address.</p>
+      </div>
+
+      {% if has_emergency_service %}
+      <div class="ws-faq-item">
+        <h3>Do you offer emergency service?</h3>
+        <p>Yes. {{ site.biz_name }} offers 24/7 emergency {{ site.industry | lower }} service in {{ site.service_area }}.</p>
+      </div>
+      {% endif %}
+
+      {% if shows_pricing %}
+      <div class="ws-faq-item">
+        <h3>Where can I ask about pricing?</h3>
+        <p>Call {{ site.phone }} or submit the form below to ask about pricing for your service request.</p>
+      </div>
+      {% endif %}
+
+      {% if site.certifications %}
+      <div class="ws-faq-item">
+        <h3>What credentials do you hold?</h3>
+        <p>{{ site.certifications }}</p>
+      </div>
+      {% endif %}
+
+      {% if site.differentiator %}
+      <div class="ws-faq-item">
+        <h3>Why choose {{ site.biz_name }} over another {{ site.industry | lower }} company?</h3>
+        <p>{{ site.differentiator }}</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- Reviews Section -->
+{% if site.testimonials or (site.rating_value and site.review_count) %}
+<section class="ws-section">
+  <div class="ws-container">
+    <div class="ws-section-header">
+      <div class="ws-eyebrow">Reviews</div>
+      <h2>What Customers Say</h2>
+    </div>
+
+    <div class="ws-reviews-grid">
+      {% if site.testimonials %}
+      <div class="ws-review-card">
+        <div class="ws-review-stars">{% for _ in range(5) %}{{ icons.icon('star', 15) }}{% endfor %}</div>
+        <div class="ws-review-quote">{{ site.testimonials }}</div>
+        <div class="ws-review-attribution">{{ site.biz_name }} Customer</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Business History Section -->
+{% if site.years_in_biz %}
+<section class="ws-section">
+  <div class="ws-container">
+    <div class="ws-story-section">
+      <div class="ws-story-image">{{ icons.icon('briefcase', 40) }}</div>
+      <div class="ws-story-text">
+        <div class="ws-eyebrow">Experience</div>
+        <div class="ws-pull-quote">Serving {{ site.service_area }}</div>
+        <p class="ws-body-text">{{ site.biz_name }} has served {{ site.service_area }} for {{ site.years_in_biz }} years.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Service Area Section -->
+<section class="ws-section ws-section-muted">
+  <div class="ws-container">
+    <div class="ws-section-header">
+      <div class="ws-eyebrow">Location</div>
+      <h2>Service Area</h2>
+    </div>
+
+    <div class="ws-location-grid">
+      <div class="ws-location-info">
+        <div style="font-size:1.1rem; margin-bottom:16px; display:flex; align-items:center; gap:8px;">{{ icons.icon('pin', 18) }} {{ site.service_area }}</div>
+        <h3 style="font-size:1.1rem; margin-bottom:8px;">Cities We Serve</h3>
+        <ul class="ws-cities">
+          <li>{{ site.service_area }}</li>
+        </ul>
+      </div>
+      <div class="ws-location-cta">
+        <div class="ws-offer">Need service in {{ site.service_area }}?</div>
+        <p style="color: var(--ws-muted); margin-bottom:16px;">Contact {{ site.biz_name }} to discuss your request.</p>
+        <a href="{{ site_root }}/contact" class="ws-btn ws-btn-primary">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Lead Capture Section -->
+<section class="ws-section ws-cta-band" id="lead-capture">
+  <div class="ws-container">
+    <div class="ws-section-header" style="margin:0 auto; text-align:center;">
+      <div class="ws-eyebrow">Ready for help?</div>
+      <h2>Tell Us What You Need</h2>
+      <p class="ws-body-text" style="margin:12px auto 0;">Share your name, contact details, and what you need.</p>
+    </div>
+
+    <form class="ws-lead-form" action="{{ lead_endpoint }}" method="post">
+      <input type="hidden" name="source_path" value="{{ lead_source_path }}" />
+      <label class="ws-visually-hidden" for="lead-name">Your Name</label>
+      <input type="text" id="lead-name" placeholder="Your Name" name="name" required />
+      <label class="ws-visually-hidden" for="lead-phone">Phone Number</label>
+      <input type="tel" id="lead-phone" placeholder="Phone Number" name="phone" required />
+      <label class="ws-visually-hidden" for="lead-email">Email</label>
+      <input type="email" id="lead-email" placeholder="Email" name="email" required />
+      <label class="ws-visually-hidden" for="lead-message">What do you need?</label>
+      <textarea id="lead-message" placeholder="What do you need?" name="message" required></textarea>
+      <div class="ws-honeypot" aria-hidden="true">
+        <label for="lead-website">Website</label>
+        <input type="text" id="lead-website" name="website" tabindex="-1" autocomplete="off" />
+      </div>
+      <button type="submit" class="ws-btn ws-btn-primary">Get Help &rarr;</button>
+      <div class="ws-lead-status" role="status" aria-live="polite"></div>
+    </form>
+
+    <div class="ws-lead-disclaimer">{{ icons.icon('check', 13) }} Your request goes directly to {{ site.biz_name }}</div>
+  </div>
+</section>
+
+<!-- Services Grid -->
+{% if services %}
+<section class="ws-section">
+  <div class="ws-container">
+    <h2>{{ site.industry }} Services</h2>
+    <ul class="ws-service-grid">
+      {% for svc in services %}
+      <li><a href="{{ site_root }}/services/{{ svc.slug }}">{{ svc.name }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

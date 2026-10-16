@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shield Pest Control — Pest & Termite Control in Portland</title>
+    <meta name="description" content="Shield Pest Control provides pest control, termite treatment, and wildlife removal in Portland. Licensed & insured. Free inspections. Eco-friendly solutions." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #0A1A0A;
+            --bg-surface: #122012;
+            --bg-card: #1A2A1A;
+            --primary: #4CAF50;
+            --primary-dark: #388E3C;
+            --accent: #C8A25A;
+            --text: #F0F2F5;
+            --muted: #8A9B8A;
+            --border: #1A3A1A;
+            --shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .btn { display: inline-block; padding: 14px 36px; border-radius: 4px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; border: none; text-decoration: none; text-transform: uppercase; letter-spacing: 0.06em; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(76,175,80,0.3); }
+        .btn-secondary { background: transparent; color: var(--text); border: 2px solid var(--border); }
+        .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+        .section { padding: 80px 0; }
+        .section-header { max-width: 700px; margin-bottom: 48px; }
+        .eyebrow { font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; font-weight: 600; }
+        h1, h2, h3 { font-family: 'Inter', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: -0.01em; }
+        h1 { font-size: clamp(44px, 5.5vw, 72px); line-height: 1.0; }
+        h2 { font-size: clamp(30px, 3.5vw, 44px); line-height: 1.1; }
+        h3 { font-size: 1.3rem; }
+        .body-text { color: var(--muted); line-height: 1.8; max-width: 560px; }
+
+        nav { padding: 20px 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .logo { font-family: 'Inter', sans-serif; font-size: 26px; font-weight: 800; text-transform: uppercase; }
+        .logo span { color: var(--primary); }
+        .nav-links { display: flex; gap: 32px; list-style: none; }
+        .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.8rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--primary); }
+        @media (max-width: 768px) { .nav-links { display: none; } }
+
+        #hero { min-height: 90vh; display: flex; align-items: center; background: radial-gradient(ellipse at 20% 30%, rgba(76,175,80,0.04), transparent 60%); }
+        .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .hero-tag { display: inline-block; background: rgba(76,175,80,0.1); color: var(--primary); padding: 6px 18px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 20px; }
+        .hero-stats { display: flex; gap: 40px; margin-top: 32px; }
+        .hero-stats .stat-num { font-family: 'Inter', sans-serif; font-size: 2.2rem; color: var(--primary); font-weight: 700; }
+        .hero-stats .stat-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        .hero-features { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 24px; }
+        .hero-features span { font-size: 0.85rem; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+        .hero-features span::before { content: '◆'; color: var(--primary); }
+        .hero-image { background: var(--bg-surface); border-radius: 8px; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; font-size: 5rem; border: 1px solid var(--border); }
+        @media (max-width: 1024px) { .hero-grid { grid-template-columns: 1fr; } }
+
+        .trust-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; text-align: center; padding: 40px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .trust-num { font-family: 'Inter', sans-serif; font-size: 1.8rem; color: var(--primary); }
+        .trust-label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .reasons-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+        .reason-card { background: var(--bg-surface); border-radius: 8px; padding: 36px; text-align: center; border: 1px solid var(--border); transition: all 0.3s; }
+        .reason-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: var(--shadow); }
+        .reason-icon { font-size: 2.4rem; margin-bottom: 12px; display: block; }
+        .reason-card h3 { margin-bottom: 6px; }
+        .reason-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
+
+        .reviews-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .review-card { background: var(--bg-surface); border-radius: 8px; padding: 28px 32px; border: 1px solid var(--border); }
+        .review-stars { color: var(--primary); font-size: 0.9rem; letter-spacing: 2px; margin-bottom: 8px; }
+        .review-card .quote { font-style: italic; font-size: 1rem; color: var(--text); }
+        .review-card .attribution { margin-top: 12px; font-size: 0.85rem; color: var(--muted); }
+
+        .story-section { display: grid; grid-template-columns: 1fr 2fr; gap: 48px; align-items: center; }
+        .story-image { aspect-ratio: 1/1; border-radius: 8px; background: var(--bg-surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
+        .story-image .initials { font-family: 'Inter', sans-serif; font-size: 4rem; color: var(--primary); opacity: 0.3; }
+        .story-text .pull-quote { font-family: 'Inter', sans-serif; font-size: clamp(1.6rem, 2.5vw, 2.8rem); color: var(--primary); line-height: 1.2; margin-bottom: 16px; text-transform: uppercase; }
+        @media (max-width: 1024px) { .story-section { grid-template-columns: 1fr; } .story-image { max-width: 360px; margin: 0 auto; } }
+
+        .location-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+        .location-cta { background: var(--bg-surface); border-radius: 8px; padding: 32px; text-align: center; border: 1px solid var(--border); }
+        .location-cta .offer { color: var(--primary); font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+        .location-info ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+        .location-info ul li { background: var(--bg-surface); padding: 4px 14px; border-radius: 4px; font-size: 0.85rem; color: var(--muted); border: 1px solid var(--border); }
+
+        #lead-capture { background: var(--bg-surface); border-top: 3px solid var(--primary); text-align: center; padding: 80px 0; }
+        .lead-form { max-width: 440px; margin: 32px auto 0; display: flex; flex-direction: column; gap: 12px; }
+        .lead-form input { padding: 16px 20px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 1rem; }
+        .lead-form input:focus { outline: 2px solid var(--primary); }
+        .lead-form .btn { width: 100%; justify-content: center; padding: 18px; font-size: 1.05rem; }
+        .lead-disclaimer { font-size: 0.8rem; color: var(--muted); margin-top: 12px; }
+
+        footer { background: var(--bg); border-top: 1px solid var(--border); padding: 48px 0 24px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
+        .footer-col h5 { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+        .footer-col ul { list-style: none; padding: 0; }
+        .footer-col ul li { margin-bottom: 6px; }
+        .footer-col ul li a { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+        .footer-col ul li a:hover { color: var(--primary); }
+        .footer-bottom { border-top: 1px solid var(--border); margin-top: 40px; padding-top: 20px; display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted); }
+        @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; } }
+
+        .angel-badge { position: fixed; bottom: 28px; right: 28px; z-index: 999; cursor: pointer; width: 64px; height: 64px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 24px; transition: all 0.3s; box-shadow: 0 4px 20px rgba(76,175,80,0.3); }
+        .angel-badge:hover { transform: scale(1.06); }
+    </style>
+</head>
+<body>
+
+    <nav class="container">
+        <div class="logo">Shield <span>Pest Control</span></div>
+        <ul class="nav-links">
+            <li><a href="#why">Services</a></li>
+            <li><a href="#reviews">Reviews</a></li>
+            <li><a href="#story">About</a></li>
+        </ul>
+        <a href="#lead-capture" class="btn btn-primary" style="padding:10px 28px; font-size:0.75rem;">Free Inspection</a>
+    </nav>
+
+    <div class="angel-badge" onclick="alert('Hi! This is Angel, the AI receptionist at Shield Pest Control. How can I help you today?')">✦</div>
+
+    <section id="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div>
+                    <div class="hero-tag">Licensed · Insured · Eco-Friendly</div>
+                    <h1>Pest Free. <span style="color:var(--primary);">Peace of Mind.</span></h1>
+                    <p class="body-text" style="margin:16px 0 24px;">Pest control, termite treatment, and wildlife removal in Portland. Safe, effective, and eco-friendly solutions. Free inspections.</p>
+                    <div class="hero-features">
+                        <span>Licensed & insured</span>
+                        <span>Eco-friendly solutions</span>
+                        <span>Free inspections</span>
+                    </div>
+                    <div class="hero-stats">
+                        <div><div class="stat-num">8,000+</div><div class="stat-label">Happy Customers</div></div>
+                        <div><div class="stat-num">15yr</div><div class="stat-label">Experience</div></div>
+                        <div><div class="stat-num">4.9★</div><div class="stat-label">Rating</div></div>
+                    </div>
+                    <div style="margin-top:32px; display:flex; gap:16px; flex-wrap:wrap;">
+                        <a href="#lead-capture" class="btn btn-primary">Free Inspection</a>
+                        <a href="#reviews" class="btn btn-secondary">See Reviews</a>
+                    </div>
+                </div>
+                <div class="hero-image">🛡️</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container" id="trust">
+        <div class="trust-grid">
+            <div><div class="trust-num">★★★★★</div><div class="trust-label">4.9 · 200+ Reviews</div></div>
+            <div><div class="trust-num">✓</div><div class="trust-label">Licensed & Insured</div></div>
+            <div><div class="trust-num">🌿</div><div class="trust-label">Eco-Friendly</div></div>
+            <div><div class="trust-num">💰</div><div class="trust-label">Free Inspections</div></div>
+        </div>
+    </section>
+
+    <section id="why" class="section">
+        <div class="container">
+            <div class="section-header">
+                <div class="eyebrow">Why Shield</div>
+                <h2>Three Reasons <span style="color:var(--primary);">We're Different</span></h2>
+            </div>
+            <div class="reasons-grid">
+                <div class="reason-card"><span class="reason-icon">🛡️</span><h3>Guaranteed Results</h3><p>If pests return between treatments, we come back at no charge. Your satisfaction is our priority.</p></div>
+                <div class="reason-card"><span class="reason-icon">🌿</span><h3>Eco-Friendly Solutions</h3><p>We use safe, environmentally responsible products that protect your family, pets, and property.</p></div>
+                <div class="reason-card"><span class="reason-icon">📋</span><h3>Preventative Protection</h3><p>Our quarterly plans keep pests out year-round with scheduled inspections and preventive treatments.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="reviews" class="section" style="background:var(--bg-surface);">
+        <div class="container">
+            <div class="section-header"><div class="eyebrow">Reviews</div><h2>What Homeowners <span style="color:var(--primary);">Say</span></h2></div>
+            <div class="reviews-grid">
+                <div class="review-card"><div class="review-stars">★★★★★</div><div class="quote">"Had a termite issue. Shield came out, treated it, and set up a prevention plan. Professional, thorough, and they explained everything clearly."</div><div class="attribution"><strong>James R.</strong> · Homeowner</div></div>
+                <div class="review-card"><div class="review-stars">★★★★★</div><div class="quote">"We use their quarterly pest control service. Our house has been pest-free for over a year. Great service, friendly technicians."</div><div class="attribution"><strong>Linda M.</strong> · Homeowner</div></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="story" class="section">
+        <div class="container">
+            <div class="story-section">
+                <div class="story-image"><div style="text-align:center;"><div class="initials">TK</div><div style="font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-top:4px;">Founder</div></div></div>
+                <div class="story-text">
+                    <div class="eyebrow">Our Story</div>
+                    <div class="pull-quote">Built to Protect</div>
+                    <p class="body-text">Shield Pest Control was founded by Tom Kirkland, a biologist who saw a need for effective, environmentally responsible pest control. He built a company that protects homes without harming the environment.</p>
+                    <p class="body-text" style="margin-top:16px;">Fifteen years and 8,000+ happy customers later, we're still committed to safe, effective pest control.</p>
+                    <p style="margin-top:12px; color:var(--primary); font-weight:500;">Tom Kirkland · Founder · OR License #PC-12345</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="location" class="section" style="background:var(--bg-surface);">
+        <div class="container">
+            <div class="section-header"><div class="eyebrow">Location</div><h2>Service <span style="color:var(--primary);">Area</span></h2></div>
+            <div class="location-grid">
+                <div class="location-info">
+                    <div style="font-size:1.1rem; margin-bottom:16px;">🗺️ 1234 SW Green St, Portland, OR 97201</div>
+                    <h3 style="font-size:1.1rem; margin-bottom:8px;">Cities We Serve</h3>
+                    <ul><li>Portland Metro</li><li>Beaverton</li><li>Tigard</li><li>Lake Oswego</li><li>Gresham</li><li>Hillsboro</li></ul>
+                    <div style="margin-top:16px; font-size:0.8rem; color:var(--muted);">OR License #PC-12345</div>
+                </div>
+                <div class="location-cta">
+                    <div class="offer">🛡️ Free inspection — no obligation, ever</div>
+                    <p style="color:var(--muted); margin-bottom:16px;">We'll call within 1 hour.</p>
+                    <a href="#lead-capture" class="btn btn-primary">Free Inspection</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="lead-capture">
+        <div class="container">
+            <div class="section-header" style="margin:0 auto; text-align:center;"><div class="eyebrow">Pest Problems?</div><h2>Tell Us What <span style="color:var(--primary);">You're Seeing</span></h2><p class="body-text" style="margin:12px auto 0;">Name, phone, and what kind of pests. We'll call within 1 hour.</p></div>
+            <form class="lead-form" onsubmit="alert('Thank you! We\'ll call within 1 hour.'); return false;">
+                <input type="text" placeholder="Your Name" required />
+                <input type="tel" placeholder="Phone Number" required />
+                <input type="text" placeholder="What kind of pests are you seeing?" />
+                <button type="submit" class="btn btn-primary">Free Inspection →</button>
+            </form>
+            <div class="lead-disclaimer">✓ We reply within 1 business hour</div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div><div class="logo" style="font-size:22px;">Shield <span>Pest Control</span></div><div style="color:var(--muted); font-size:0.9rem; margin-top:6px;">Eco-friendly pest control for Portland homes and businesses.</div></div>
+                <div><h5>Quick Links</h5><ul><li><a href="#why">Services</a></li><li><a href="#reviews">Reviews</a></li><li><a href="#story">About</a></li></ul></div>
+                <div><h5>Contact</h5><ul><li><a href="tel:+15035559012">(503) 555-9012</a></li><li><a href="mailto:info@shieldpest.com">info@shieldpest.com</a></li></ul></div>
+            </div>
+            <div class="footer-bottom"><span>© 2026 Shield Pest Control · OR License #PC-12345</span></div>
+        </div>
+    </footer>
+
+</body>
+</html>

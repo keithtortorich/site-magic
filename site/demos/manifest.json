@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Northwest Tree Care (Arbor)",
+    "slug": "arbor",
+    "file": "demos/arbor.html"
+  },
+  {
+    "name": "Premier Garage Doors",
+    "slug": "garage",
+    "file": "demos/garage.html"
+  },
+  {
+    "name": "Desert Cooling (HVAC)",
+    "slug": "hvac",
+    "file": "demos/hvac.html"
+  },
+  {
+    "name": "Evergreen Landscapes",
+    "slug": "landscape",
+    "file": "demos/landscape.html"
+  },
+  {
+    "name": "Sparkle Clean",
+    "slug": "maid",
+    "file": "demos/maid.html"
+  },
+  {
+    "name": "Shield Pest Control",
+    "slug": "pest",
+    "file": "demos/pest.html"
+  },
+  {
+    "name": "Rivera Plumbing",
+    "slug": "plumbing",
+    "file": "demos/plumbing.html"
+  },
+  {
+    "name": "Gulf Coast Roofing",
+    "slug": "roof",
+    "file": "demos/roof.html"
+  },
+  {
+    "name": "RapidDry Restore (Water)",
+    "slug": "waterrestore",
+    "file": "demos/waterrestore.html"
+  }
+]

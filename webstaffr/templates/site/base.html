@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }}</title>
+<meta name="description" content="{{ meta_description }}">
+<link rel="canonical" href="{{ page_url }}">
+<meta property="og:title" content="{{ title }}">
+<meta property="og:description" content="{{ meta_description }}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ page_url }}">
+<style>
+:root {
+  --ws-brand-primary: {{ palette.primary }};
+  --ws-primary: {{ palette.primary_accessible }};
+  --ws-primary-dark: {{ palette.primary_accessible_dark }};
+  --ws-primary-light: {{ palette.primary_light }};
+  --ws-ink: {{ palette.neutral_dark }};
+  --ws-ink-invert: {{ palette.neutral_light }};
+  --ws-muted: #5a6672;
+  --ws-bg-muted: {{ palette.neutral_light }};
+  --ws-border: #e2e6ec;
+  --ws-header-dark: #101826;
+  --ws-emergency: #c0392b;
+  --ws-shadow: 0 1px 2px rgba(16, 24, 38, 0.06);
+  --ws-shadow-lift: 0 10px 30px rgba(16, 24, 38, 0.1);
+}
+</style>
+<link rel="stylesheet" href="{{ site_root }}/static/site.css">
+<script type="application/ld+json">{{ local_business_schema | tojson_script }}</script>
+{% if service_schema %}
+<script type="application/ld+json">{{ service_schema | tojson_script }}</script>
+{% endif %}
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+{% import "site/_icons.html" as icons %}
+<div class="ws-utility-bar">
+  <div class="ws-utility-bar-inner">
+    <span class="ws-utility-item">{{ site.industry }} service in {{ site.service_area }}</span>
+    {% if has_emergency_service %}<span class="ws-utility-item ws-utility-item-accent">{{ icons.icon('bolt', 15) }} 24/7 emergency service</span>{% endif %}
+    <a class="ws-utility-phone" href="tel:{{ site.phone }}">{{ icons.icon('phone', 15) }} {{ site.phone }}</a>
+  </div>
+</div>
+<header class="ws-header">
+  <div class="ws-header-inner">
+    <a class="ws-brand" href="{{ site_root }}">{{ site.biz_name }}</a>
+    <nav class="ws-nav" aria-label="Primary">
+      <a href="{{ site_root }}">Home</a>
+      <a href="{{ site_root }}/about">About</a>
+      {% if services %}<a href="{{ site_root }}#services">Services</a>{% endif %}
+      {% if has_reviews %}<a href="{{ site_root }}/reviews">Reviews</a>{% endif %}
+      <a href="{{ site_root }}/contact">Contact</a>
+    </nav>
+    <a class="ws-nav-cta" href="tel:{{ site.phone }}">{{ icons.icon('phone', 15) }} {{ site.phone }}</a>
+  </div>
+</header>
+
+<main>
+{% block content %}{% endblock %}
+</main>
+
+<footer class="ws-footer">
+  <div class="ws-footer-inner">
+    <p>&copy; {{ current_year }} {{ site.biz_name }}. Serving {{ site.service_area }}.</p>
+    <p><a href="tel:{{ site.phone }}">{{ site.phone }}</a> &middot; <a href="mailto:{{ site.email }}">{{ site.email }}</a></p>
+    <p class="ws-footer-attribution">Site by NetBuild.Pro</p>
+  </div>
+</footer>
+
+<script src="/static/angel-widget.js" data-tenant-id="{{ site.tenant_id }}" data-api-base="{{ api_base }}"></script>
+<script>
+// Scroll-reveal for .ws-section blocks. No-op (all visible) if
+// IntersectionObserver is unavailable or the user prefers reduced motion.
+(function () {
+  var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var targets = document.querySelectorAll('.ws-section');
+  if (prefersReduced || !('IntersectionObserver' in window)) {
+    targets.forEach(function (el) { el.classList.add('ws-is-visible'); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('ws-is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  targets.forEach(function (el) { io.observe(el); });
+})();
+</script>
+<script>
+document.querySelectorAll('.ws-lead-form').forEach(function (form) {
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    const button = form.querySelector('button[type="submit"]');
+    const status = form.querySelector('.ws-lead-status');
+    const originalLabel = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Sending...';
+    status.className = 'ws-lead-status';
+    status.textContent = '';
+    try {
+      const response = await fetch(form.action, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(Object.fromEntries(new FormData(form).entries()))
+      });
+      if (!response.ok) throw new Error('request_failed');
+      const result = await response.json();
+      form.reset();
+      status.className = 'ws-lead-status ws-lead-status-success';
+      status.textContent = 'Request received. Reference: ' + result.lead_id;
+    } catch (error) {
+      status.className = 'ws-lead-status ws-lead-status-error';
+      status.textContent = 'We could not save your request. Please call or email the business directly.';
+    } finally {
+      button.disabled = false;
+      button.textContent = originalLabel;
+    }
+  });
+});
+</script>
+
+<!-- Vercel Speed Insights -->
+<script>
+  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+</html>

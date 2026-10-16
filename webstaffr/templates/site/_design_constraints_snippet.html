@@ -1,0 +1,347 @@
+{# Design Constraints Snippet Library
+
+   Use these templates to apply Emil Kowalski's animation rules and tasteskill's
+   design directives to any component. Copy-paste and customize.
+
+   Available context variables (passed by build_page_context):
+   - design_config: DesignSystemConfig (variance, motion_intensity, visual_density)
+   - spacing: dict (section_gap, card_gap, padding by density)
+   - hero_layout: str (center, split, offset)
+   - banned_patterns: list[str] (things you must NOT do)
+   - a11y: AccessibilityConstraints (contrast ratios, touch targets, etc.)
+   - perf: PerformanceGuardrails (animation performance rules)
+#}
+
+{# ==================== ANIMATION: Emil's 4-Question Framework ==================== #}
+{# Before adding ANY animation, answer: frequency, purpose, easing, duration #}
+
+{% macro animated_button(text, onclick="", frequency="occasional", purpose="feedback", duration_ms=160) %}
+{# frequency: never, rarely, occasional, frequent (HIGH frequency = NO animation) #}
+{# purpose: spatial_consistency, feedback, explanation, state_indication #}
+{# duration: button=100-160ms, tooltip=125-200ms, dropdown=150-250ms, modal=200-500ms #}
+
+  {% if frequency != "frequent" %}  {# Never animate keyboard-driven actions #}
+    <button class="ws-btn-animated"
+            onclick="{{ onclick }}"
+            data-frequency="{{ frequency }}"
+            style="transition: transform {{ duration_ms }}ms cubic-bezier(0.23, 1, 0.32, 1)">
+      {{ text }}
+    </button>
+    <style>
+      .ws-btn-animated {
+        {% if purpose == "feedback" %}
+          {# Button press: scale(0.97) gives instant feedback (Sonner pattern) #}
+        {% endif %}
+      }
+      .ws-btn-animated:active {
+        transform: scale(0.97);  {# 0.95-0.98 for press feedback #}
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .ws-btn-animated {
+          transition: none;  {# Respect motion sensitivity #}
+        }
+      }
+    </style>
+  {% else %}
+    {# Frequent action (100+ times/day) = NO animation #}
+    <button class="ws-btn-static" onclick="{{ onclick }}">
+      {{ text }}
+    </button>
+  {% endif %}
+{% endmacro %}
+
+{# ==================== ENTRY ANIMATION: Never scale(0) ==================== #}
+{# Always start from scale(0.95) + opacity: 0, never pure scale(0) #}
+
+{% macro reveal_card(content, delay_ms=0) %}
+  <div class="ws-card-reveal" style="animation-delay: {{ delay_ms }}ms">
+    {{ content }}
+  </div>
+  <style>
+    .ws-card-reveal {
+      transform: scale(0.95);  {# Start visible but small, NOT scale(0) #}
+      opacity: 0;
+      animation: revealCard 250ms cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+    @keyframes revealCard {
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ws-card-reveal {
+        animation: fadeCard 200ms ease;  {# Opacity only, no scale #}
+      }
+      @keyframes fadeCard {
+        to { opacity: 1; }
+      }
+    }
+  </style>
+{% endmacro %}
+
+{# ==================== SPACING: Use design_config.spacing_scale ==================== #}
+
+{% macro section_with_spacing(title, content) %}
+  {# Spacing automatically adjusts based on visual_density (spacious/standard/dense) #}
+  <section class="ws-section {{ design_config.spacing_scale.section_gap }}">
+    <h2>{{ title }}</h2>
+    {{ content }}
+  </section>
+{% endmacro %}
+
+{# ==================== POPOVERS: Transform-origin-aware (Emil) ==================== #}
+{# Popovers scale from trigger, NOT center. Modals stay centered. #}
+
+{% macro popover_menu(items) %}
+  <div class="ws-popover" style="transform-origin: var(--radix-popover-content-transform-origin)">
+    <ul>
+    {% for item in items %}
+      <li><a href="{{ item.href }}">{{ item.label }}</a></li>
+    {% endfor %}
+    </ul>
+  </div>
+  <style>
+    .ws-popover {
+      transform: scale(0.95) translateY(-8px);
+      opacity: 0;
+      transition: opacity 125ms ease-out, transform 125ms ease-out;
+      pointer-events: none;
+    }
+    .ws-popover.open {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ws-popover {
+        transition: opacity 125ms ease;  {# Opacity only #}
+      }
+      .ws-popover.open {
+        transform: none;  {# No scale/translate #}
+      }
+    }
+  </style>
+{% endmacro %}
+
+{# ==================== TOOLTIP: Skip-delay on Subsequent Hovers (Emil) ==================== #}
+
+{% macro tooltip_text(text) %}
+  <div class="ws-tooltip" data-tooltip="{{ text }}">
+    {# First hover: wait 200ms, then show with 125ms animation #}
+    {# Subsequent hovers: instant (data-instant attribute skips delay) #}
+  </div>
+  <style>
+    .ws-tooltip {
+      position: relative;
+    }
+    .ws-tooltip::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 120%;
+      white-space: nowrap;
+      background: var(--ws-header-dark);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      opacity: 0;
+      transform: scale(0.97);
+      pointer-events: none;
+
+      {# First hover: delay + animation #}
+      transition-delay: 200ms;
+      transition: opacity 125ms cubic-bezier(0.23, 1, 0.32, 1),
+                  transform 125ms cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .ws-tooltip:hover::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    {# Subsequent tooltips: skip delay and animation #}
+    .ws-tooltip[data-instant]::after {
+      transition-duration: 0ms;
+      transition-delay: 0ms;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ws-tooltip::after {
+        transition: opacity 125ms ease;
+        transform: none;  {# No scale #}
+      }
+    }
+  </style>
+{% endmacro %}
+
+{# ==================== LAYOUT: Hero by design_config.hero_layout ==================== #}
+
+{% macro hero_section() %}
+  {% if design_config.hero_layout == "center" %}
+    {# Centered (minimal/balanced variance) #}
+    <section class="ws-hero ws-hero-center">
+      <h1>{{ site.biz_name }}</h1>
+      <p class="ws-tagline">{{ site.tagline }}</p>
+      {% if site.emergency_service %}
+        <p class="ws-emergency">24/7 Emergency Service Available</p>
+      {% endif %}
+    </section>
+
+  {% elif design_config.hero_layout == "split" %}
+    {# Split/asymmetric (bold variance) #}
+    <section class="ws-hero ws-hero-split">
+      <div class="ws-hero-text">
+        <h1>{{ site.biz_name }}</h1>
+        <p class="ws-tagline">{{ site.tagline }}</p>
+        <a href="tel:{{ site.phone }}" class="ws-btn">Call Now</a>
+      </div>
+      <div class="ws-hero-visual">
+        {# Image, icon, or illustration goes here #}
+      </div>
+    </section>
+
+  {% elif design_config.hero_layout == "offset" %}
+    {# Offset/asymmetric alternative (bold variance) #}
+    <section class="ws-hero ws-hero-offset">
+      <h1>{{ site.biz_name }}</h1>
+      <p class="ws-tagline">{{ site.tagline }}</p>
+      {# Floating element for visual interest #}
+      <div class="ws-hero-accent"></div>
+    </section>
+  {% endif %}
+{% endmacro %}
+
+{# ==================== ACCESSIBILITY: Contrast, Touch Targets, Alt Text ==================== #}
+
+{% macro accessible_form() %}
+  {# ✅ Labels ABOVE inputs (never placeholder-only) #}
+  <form>
+    <div class="ws-form-group">
+      <label for="phone" style="display: block; margin-bottom: 0.5rem; font-weight: 600">
+        Phone Number
+      </label>
+      <input id="phone"
+             type="tel"
+             placeholder="(555) 123-4567"
+             style="min-height: 44px; min-width: 44px">
+      {# ✅ Touch target 44x44px minimum #}
+
+      {# ✅ Error message inline (not at top of form) #}
+      <span class="ws-error" style="color: var(--ws-emergency); display: block; margin-top: 0.25rem">
+        Required field
+      </span>
+    </div>
+
+    <button type="submit" style="min-height: 44px; min-width: 44px; outline: 2px solid var(--ws-primary)">
+      {# ✅ Focus ring visible (never remove :focus) #}
+      Send
+    </button>
+  </form>
+
+  <style>
+    .ws-form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--ws-border);
+      border-radius: 6px;
+      {# ✅ Contrast 4.5:1+ on body text #}
+      color: var(--ws-ink);
+      background: white;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      input:focus {
+        outline: 2px solid var(--ws-primary);  {# Visible focus, no animation #}
+      }
+    }
+  </style>
+{% endmacro %}
+
+{# ==================== PERFORMANCE: Only Transform + Opacity ==================== #}
+
+{% macro performant_slide_in(content) %}
+  {# ✅ GOOD: Hardware-accelerated (GPU), smooth under load #}
+  <div class="ws-slide-performant">
+    {{ content }}
+  </div>
+
+  <style>
+    .ws-slide-performant {
+      transform: translateX(-100%);
+      opacity: 0;
+      animation: slideInPerformant 200ms cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+
+    @keyframes slideInPerformant {
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    {# ❌ DON'T do this: causes layout recalc on every frame #}
+    {# @keyframes slideInBad {
+      to { left: 0; width: 100%; height: auto; }
+    } #}
+  </style>
+{% endmacro %}
+
+{# ==================== REDUCE MOTION: Mandatory for accessibility ==================== #}
+
+{% macro motion_aware_reveal(content) %}
+  <div class="ws-motion-aware">
+    {{ content }}
+  </div>
+
+  <style>
+    .ws-motion-aware {
+      opacity: 0;
+      animation: revealWithMotion 250ms cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+
+    @keyframes revealWithMotion {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    {# MANDATORY: Respect prefers-reduced-motion (motion sickness) #}
+    @media (prefers-reduced-motion: reduce) {
+      .ws-motion-aware {
+        animation: fadeOnly 200ms ease;  {# Opacity only, no motion #}
+      }
+      @keyframes fadeOnly {
+        to { opacity: 1; }
+      }
+    }
+  </style>
+{% endmacro %}
+
+{# ==================== TOUCH HOVER: Only on Desktop (pointer: fine) ==================== #}
+
+{% macro touch_safe_hover(content) %}
+  <div class="ws-hover-safe">
+    {{ content }}
+  </div>
+
+  <style>
+    .ws-hover-safe {
+      cursor: pointer;
+    }
+
+    {# Only apply hover on devices that can hover (desktop, not touch) #}
+    @media (hover: hover) and (pointer: fine) {
+      .ws-hover-safe:hover {
+        transform: scale(1.05);
+        background-color: var(--ws-primary-light);
+      }
+    }
+
+    {# Touch devices skip hover (triggers on tap, causing false positives) #}
+  </style>
+{% endmacro %}

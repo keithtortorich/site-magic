@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NetBuild.Pro | 24/7 Receptionist for Home Services</title>
+  <meta name="description" content="Stop losing jobs to missed calls. NetBuild.Pro answers your phone 24/7. No AI. No setup fees. Get a real job or it's free.">
+  <style>
+    :root {
+      --primary: #4169E1;        /* Royal blue */
+      --secondary: #000080;      /* Navy */
+      --accent: #FF6600;         /* Electric orange */
+      --bg: #e0e0e0;             /* Light gray (darker) */
+      --text: #16202e;           /* Dark text */
+      --text-light: #5a6672;     /* Muted text */
+      --border: #e2e6ec;
+      --shadow: 0 2px 8px rgba(16, 24, 38, 0.1);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      line-height: 1.6;
+      background: var(--bg);
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--secondary);
+      text-decoration: none;
+    }
+
+    nav {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    nav a:hover {
+      color: var(--primary);
+    }
+
+    .cta-button {
+      background: var(--accent);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .cta-button:hover {
+      background: #e55a00;
+    }
+
+    .cta-button.secondary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .cta-button.secondary:hover {
+      background: #2f5cc0;
+    }
+
+    section {
+      padding: 60px 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, white 0%, var(--bg) 100%);
+      padding: 80px 20px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin: 0 0 20px 0;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .hero h2 {
+      font-size: 24px;
+      font-weight: 400;
+      margin: 0 0 40px 0;
+      color: var(--text-light);
+      line-height: 1.4;
+    }
+
+    .trust-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+      margin: 40px 0;
+      padding: 30px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .trust-item {
+      text-align: center;
+    }
+
+    .trust-stat {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 0 0 8px 0;
+    }
+
+    .trust-label {
+      font-size: 14px;
+      color: var(--text-light);
+      margin: 0;
+    }
+
+    .hero-ctas {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      margin: 40px 0;
+    }
+
+    .primary-cta {
+      background: var(--accent);
+      color: white;
+      padding: 16px 32px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.2s;
+    }
+
+    .primary-cta:hover {
+      background: #e55a00;
+    }
+
+    .secondary-cta {
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .secondary-cta:hover {
+      text-decoration: underline;
+    }
+
+    /* Math Section */
+    .math-section {
+      background: white;
+      padding: 60px 20px;
+    }
+
+    .math-section h2 {
+      font-size: 36px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 40px;
+      color: var(--text);
+    }
+
+    .math-content {
+      max-width: 700px;
+      margin: 0 auto;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .math-content p {
+      margin: 16px 0;
+    }
+
+    .highlight {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* How It Works */
+    .how-it-works {
+      padding: 60px 20px;
+    }
+
+    .how-it-works h2 {
+      font-size: 36px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 50px;
+      color: var(--text);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+    }
+
+    .step {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      font-weight: 700;
+      font-size: 18px;
+      margin-bottom: 16px;
+    }
+
+    .step h3 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 16px 0;
+      color: var(--text);
+    }
+
+    .step p {
+      font-size: 14px;
+      color: var(--text-light);
+      margin: 12px 0;
+    }
+
+    /* Pricing */
+    .pricing {
+      background: white;
+      padding: 60px 20px;
+    }
+
+    .pricing h2 {
+      font-size: 36px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 50px;
+      color: var(--text);
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .pricing-card {
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 30px;
+      text-align: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .pricing-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 16px rgba(255, 102, 0, 0.15);
+    }
+
+    .pricing-card.featured {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, var(--bg) 0%, white 100%);
+      transform: scale(1.05);
+    }
+
+    .pricing-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .pricing-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 12px 0;
+    }
+
+    .pricing-price {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 16px 0;
+    }
+
+    .pricing-price-sub {
+      font-size: 14px;
+      color: var(--text-light);
+      font-weight: 400;
+    }
+
+    .pricing-features {
+      list-style: none;
+      padding: 24px 0;
+      margin: 0;
+      text-align: left;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pricing-features li {
+      padding: 8px 0;
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .pricing-cta {
+      margin-top: 24px;
+    }
+
+    /* FAQ */
+    .faq {
+      padding: 60px 20px;
+      background: white;
+    }
+
+    .faq h2 {
+      font-size: 36px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 50px;
+      color: var(--text);
+    }
+
+    .faq-item {
+      max-width: 700px;
+      margin: 0 auto 30px auto;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+    }
+
+    .faq-item:last-child {
+      border-bottom: none;
+    }
+
+    .faq-question {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0 0 12px 0;
+      cursor: pointer;
+    }
+
+    .faq-answer {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-light);
+      margin: 0;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--secondary);
+      color: white;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    footer h2 {
+      font-size: 36px;
+      font-weight: 700;
+      margin: 0 0 20px 0;
+      color: white;
+    }
+
+    footer p {
+      font-size: 16px;
+      margin: 0 0 30px 0;
+      opacity: 0.9;
+    }
+
+    footer .primary-cta {
+      background: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    footer .guarantee {
+      font-size: 13px;
+      opacity: 0.7;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .hero h2 {
+        font-size: 18px;
+      }
+
+      nav {
+        gap: 16px;
+      }
+
+      .pricing-card.featured {
+        transform: scale(1);
+      }
+
+      .trust-bar {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-inner">
+      <a class="logo" href="/">WebStaffr</a>
+      <nav>
+        <a href="#how-it-works">HOW IT WORKS</a>
+        <a href="#pricing">PRICING</a>
+        <a href="#faq">FAQ</a>
+        <button class="cta-button">START NOW</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <h1>You left money on the table this week.</h1>
+      <h2>WebStaffr answers your phone so you don't lose jobs you already paid to generate.</h2>
+
+      <div class="trust-bar">
+        <div class="trust-item">
+          <div class="trust-stat">27%</div>
+          <div class="trust-label">of calls go unanswered<br><span style="font-size: 12px; color: var(--accent);">That's revenue walking out the door</span></div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-stat">85%</div>
+          <div class="trust-label">never call back<br><span style="font-size: 12px; color: var(--accent);">They call your competitor instead</span></div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-stat">78%</div>
+          <div class="trust-label">hire whoever responds first<br><span style="font-size: 12px; color: var(--accent);">Speed = money</span></div>
+        </div>
+      </div>
+
+      <div class="hero-ctas">
+        <button class="primary-cta">No Card. No Contract. Get a Job Or It's Free.</button>
+        <a href="#pricing" class="secondary-cta">Just Tell Me Yes →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Math Section -->
+  <section class="math-section">
+    <div class="container">
+      <h2>Let's Do The Math.</h2>
+      <div class="math-content">
+        <p>How many calls do you think you're missing in a typical week?</p>
+        <p>Most contractors we talk to say 10. Sometimes more.</p>
+        <p>That's 40 a month. At $400 a job average, that's <span class="highlight">$16,000 a month.</span> <span class="highlight">$192,000 a year.</span></p>
+        <p>Does that number hurt?</p>
+        <p>It should.</p>
+        <p>And that's just the jobs you <em>know</em> you're losing. There are more—the ones you never find out about because the customer already called someone else.</p>
+        <p>That's why we built WebStaffr. Not to automate. To recover.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <h2>Three Steps. Zero Risk.</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Tell Us About Your Business</h3>
+          <p>No card now. No long application. Just a few questions: your business name, industry, what you want customers to know.</p>
+          <p style="font-size: 12px; color: var(--accent); font-weight: 600;">Start Now →</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>We Handle Your Calls</h3>
+          <p>Within hours, your phone is answered 24/7. Nights, weekends, lunch breaks, while you're on a job. Every customer call gets answered. Every lead gets booked or forwarded to you.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>You Verify. You Decide.</h3>
+          <p>In 14 days, we show you every job we captured. Real customers. Real appointments. You verify they're legitimate. If we didn't capture a job, we cancel. No bill. No hard feelings.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <h2>Simple Pricing. One Job Pays For The Month.</h2>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-label">Test Drive</div>
+          <h3 class="pricing-name">Everything Starts Here</h3>
+          <div class="pricing-price">Free<div class="pricing-price-sub">14 days</div></div>
+          <ul class="pricing-features">
+            <li>Professional website</li>
+            <li>Live appointment booking</li>
+            <li>24/7 answering</li>
+            <li>Lead capture</li>
+          </ul>
+          <div class="pricing-cta">
+            <button class="primary-cta">No Card. No Contract. Get a Job Or It's Free.</button>
+          </div>
+        </div>
+
+        <div class="pricing-card featured">
+          <div class="pricing-label">Most Popular</div>
+          <h3 class="pricing-name">Office Staff</h3>
+          <div class="pricing-price">$497<div class="pricing-price-sub">/month</div></div>
+          <ul class="pricing-features">
+            <li>Everything in Test Drive</li>
+            <li>24/7 Receptionist</li>
+            <li>Service Advisor</li>
+            <li>Lead Coordinator</li>
+            <li>Reputation Manager</li>
+            <li>Month-to-month, cancel anytime</li>
+          </ul>
+          <div class="pricing-cta">
+            <button class="primary-cta">Get Your Office Staff Today</button>
+          </div>
+        </div>
+
+        <div class="pricing-card">
+          <div class="pricing-label">Scale</div>
+          <h3 class="pricing-name">Business Manager</h3>
+          <div class="pricing-price">$2,497<div class="pricing-price-sub">/month</div></div>
+          <ul class="pricing-features">
+            <li>Everything in Office Staff</li>
+            <li>Sales Consultant</li>
+            <li>Marketing Coordinator</li>
+            <li>Growth Manager</li>
+            <li>Doubles revenue in 12 months</li>
+          </ul>
+          <div class="pricing-cta">
+            <button class="cta-button secondary">Talk To Us</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <h2>FAQ</h2>
+
+      <div class="faq-item">
+        <h3 class="faq-question">Why is the website free?</h3>
+        <p class="faq-answer">Because we'd rather show you what WebStaffr can do than tell you. Once you see it working, the rest is an easy decision.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-question">What happens after 14 days?</h3>
+        <p class="faq-answer">You choose. We send you the details of every job we captured. Real customers, real appointments. You verify they're real. If we didn't get any, no bill. If we did, you decide whether to keep going—month-to-month, cancel anytime.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-question">Can I switch plans later?</h3>
+        <p class="faq-answer">Yes. Most contractors start with Office Staff and move to Business Manager once they've seen the results. Some scale back if they get slower. It's your business. You're in control.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-question">Is there a setup fee?</h3>
+        <p class="faq-answer">No. What you see is what you pay. No surprises.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-question">I already have someone answering the phone.</h3>
+        <p class="faq-answer">Good. WebStaffr covers the hours they can't: nights, weekends, lunch breaks, when you're on a job site. It backs up your team instead of replacing them. And it never calls in sick.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-question">I've been burned before.</h3>
+        <p class="faq-answer">We're putting our money where our mouth is. No risk to you. 14 days, free. We get you a job or we cancel.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-question">I don't trust software like this.</h3>
+        <p class="faq-answer">You shouldn't. That's why we don't ask you to trust us. We prove it works or we don't get paid. Fair?</p>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-question">I can't afford $497.</h3>
+        <p class="faq-answer">Can you afford to lose $16,000 a month? Because that's what's happening right now. What's the real concern here?</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <h2>Get Your Office Staff Working. Starting Today.</h2>
+      <p>14 days, free. No card. No contract. No risk.<br>Just tell me yes.</p>
+      <button class="primary-cta">Get Started — No Card Required</button>
+      <p class="guarantee">Backed by a 14-day performance guarantee. If we don't capture a paying job in 14 days, we cancel. No bill. No hard feelings.</p>
+    </div>
+  </footer>
+  
+  <!-- Vercel Speed Insights -->
+  <script>
+    window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+# Dev/test-only dependencies -- not needed to run the service, only to
+# run its test suite locally. Install alongside requirements.txt:
+#
+#   pip install -r requirements.txt -r requirements-dev.txt
+#
+pytest==9.1.1
