@@ -46,6 +46,7 @@ import {
   OpenAICompatibleImageGenerator,
   resolveOpenAICompatibleChatConfig,
 } from "./site_magic_ai_compatible.ts";
+import { LocalArtifactStore, SyntheticImageGenerator } from "./site_magic_local.ts";
 import { PlaywrightEvidenceRunner } from "./site_magic_evidence_runner.ts";
 
 /** Rendered pages reference /static/site.css and /static/angel-widget.js,
@@ -85,6 +86,7 @@ export function buildProductionDependencies(tenantId: string): WorkerDependencie
   // Vendor priority: OpenAI-compatible (Ollama/NVIDIA/vLLM) → OpenRouter/OmniRoute → OpenAI
   const useAICompatible = process.env.SITE_MAGIC_USE_AI_COMPATIBLE === "true";
   const useOmniRoute = process.env.SITE_MAGIC_USE_OMNIROUTE !== "false";
+  const useSyntheticAssets = process.env.SITE_MAGIC_USE_SYNTHETIC_ASSETS === "true";
   const codegenBaseUrl = process.env.SITE_MAGIC_CODEGEN_BASE_URL;
   const viaLocalGateway = Boolean(codegenBaseUrl?.includes("localhost"));
 
@@ -95,7 +97,7 @@ export function buildProductionDependencies(tenantId: string): WorkerDependencie
   if (useAICompatible) {
     // Use generic OpenAI-compatible implementations (Ollama, NVIDIA, vLLM, etc.)
     codexRuntime = new OpenAICompatibleCodegenRuntime();
-    imageGenerator = new OpenAICompatibleImageGenerator();
+    imageGenerator = useSyntheticAssets ? new SyntheticImageGenerator() : new OpenAICompatibleImageGenerator();
     const compatibleChat = resolveOpenAICompatibleChatConfig();
     const compatibleVerifyModel =
       process.env.SITE_MAGIC_IMAGE_VERIFY_MODEL ??
@@ -126,12 +128,12 @@ export function buildProductionDependencies(tenantId: string): WorkerDependencie
           }
         : { baseUrl: codegenBaseUrl }
     );
-    imageGenerator = new OpenRouterImageGenerator();
+    imageGenerator = useSyntheticAssets ? new SyntheticImageGenerator() : new OpenRouterImageGenerator();
   } else {
     // Fallback to OpenAI's Codex runtime while retaining the approved
     // OpenRouter image path (GPT Image org access remains unapproved).
     codexRuntime = new OpenAICodexRuntime();
-    imageGenerator = new OpenRouterImageGenerator();
+    imageGenerator = useSyntheticAssets ? new SyntheticImageGenerator() : new OpenRouterImageGenerator();
   }
 
   return {
@@ -140,7 +142,9 @@ export function buildProductionDependencies(tenantId: string): WorkerDependencie
     images: imageGenerator,
     imageVerifier,
     evidence: new PlaywrightEvidenceRunner({ tenantId, staticRoot: APP_STATIC_ROOT }),
-    artifacts: new SupabaseArtifactStore(),
+    artifacts: process.env.SITE_MAGIC_USE_LOCAL_ARTIFACTS === "true"
+      ? new LocalArtifactStore()
+      : new SupabaseArtifactStore(),
   };
 }
 

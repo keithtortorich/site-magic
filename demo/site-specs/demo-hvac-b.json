@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "1.0.0",
+  "siteId": "private-demo-hvac-b",
+  "tenantId": "demo-hvac-b",
+  "tenantMode": "synthetic-demo",
+  "factSnapshotHash": "sha256:fcf055e0ab387250d93431cc41eb29989dd754d5b94cc9fac34bb654db00b97b",
+  "sections": [
+    {"sectionId": "navigation", "sectionType": "navigation", "compositionVariant": "compact", "content": {"label": "Illustrative demo"}, "claims": [{"claimId": "nav-brand", "status": "supported", "text": "Cinderblock Climate Demo", "factIds": ["b-brand-name"]}]},
+    {"sectionId": "hero", "sectionType": "hero", "compositionVariant": "stacked-form", "content": {"eyebrow": "Illustrative demo", "headline": "A clearer next step for climate care.", "cta": "View demo service options"}, "claims": [{"claimId": "hero-brand", "status": "supported", "text": "Cinderblock Climate Demo", "factIds": ["b-brand-name"]}, {"claimId": "hero-local", "status": "needs_proof", "text": "", "reason": "No verified service area exists in the synthetic fact pack."}]},
+    {"sectionId": "services", "sectionType": "services", "compositionVariant": "two-card", "content": {"items": ["Heating system maintenance", "Indoor air quality consultation"]}, "claims": [{"claimId": "service-heating", "status": "supported", "text": "Heating system maintenance", "factIds": ["b-service-heating"]}, {"claimId": "service-air-quality", "status": "supported", "text": "Indoor air quality consultation", "factIds": ["b-service-air-quality"]}]},
+    {"sectionId": "proof", "sectionType": "proof", "compositionVariant": "quiet", "content": {"label": "Replace with verified proof"}, "claims": [{"claimId": "proof-license", "status": "omitted", "text": "", "reason": "No license or certification fact is present."}]},
+    {"sectionId": "contact", "sectionType": "contact", "compositionVariant": "short-form", "content": {"email": "demo-b@example.invalid", "formMode": "disabled-demo-only"}, "claims": [{"claimId": "contact-email", "status": "supported", "text": "demo-b@example.invalid", "factIds": ["b-contact-email"]}]},
+    {"sectionId": "footer", "sectionType": "footer", "compositionVariant": "simple", "content": {"label": "Illustrative synthetic demo only"}, "claims": []}
+  ]
+}
