@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "1.0.0",
+  "tenantId": "demo-hvac-a",
+  "tenantMode": "synthetic-demo",
+  "facts": [
+    {"factId": "a-brand-name", "kind": "brand", "value": "Northstar Comfort Demo", "source": {"type": "demo-only", "ref": "VRE_SAFE_DEMO.md"}, "status": "verified"},
+    {"factId": "a-service-ac-repair", "kind": "service", "value": "Air conditioning repair", "source": {"type": "demo-only", "ref": "VRE_SAFE_DEMO.md"}, "status": "verified"},
+    {"factId": "a-service-maintenance", "kind": "service", "value": "Seasonal HVAC maintenance", "source": {"type": "demo-only", "ref": "VRE_SAFE_DEMO.md"}, "status": "verified"},
+    {"factId": "a-contact-email", "kind": "contact", "value": "demo-a@example.invalid", "source": {"type": "demo-only", "ref": "VRE_SAFE_DEMO.md"}, "status": "verified"}
+  ]
+}

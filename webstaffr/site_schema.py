@@ -34,6 +34,7 @@ from .site_renderer import (
     local_business_schema,
     service_schema,
 )
+from .design_variants import design_tokens, resolve_design_variant
 
 
 def _enabled_flag(value: object) -> bool:
@@ -79,6 +80,7 @@ class SiteSchema:
     facebook_url: Optional[str] = None
     instagram_url: Optional[str] = None
     keywords: Optional[str] = None
+    design_variant: Optional[str] = None
 
     def to_dict(self) -> dict:
         """Convert to a dict safe for Jinja2 template rendering.
@@ -140,6 +142,10 @@ class SiteSchema:
         palette = generate_palette(self.brand_colors)
         validate_palette_contrast(palette)
         return palette
+
+    @property
+    def resolved_design_variant(self) -> str:
+        return resolve_design_variant(self.design_variant, self.industry)
 
     @classmethod
     def from_intake(cls, submission: IntakeSubmission) -> SiteSchema:
@@ -208,6 +214,8 @@ def build_page_context(
         # --- Design & theming
         "palette": schema.palette,
         "brand_primary": schema.brand_colors,
+        "design_variant": schema.resolved_design_variant,
+        "design_variant_tokens": design_tokens(schema.resolved_design_variant),
 
         # --- Navigation & structure
         "services": schema.service_pages,

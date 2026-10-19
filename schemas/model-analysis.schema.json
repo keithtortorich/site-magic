@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:sitemagic:schema:model-analysis:1.0.0",
+  "title": "Site Magic bounded model analysis",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "analysisId", "worker", "scope", "findings"],
+  "properties": {
+    "schemaVersion": {"const": "1.0.0"},
+    "analysisId": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+    "worker": {"enum": ["gemini-visual", "grok-text-seo", "gemini-critic", "grok-critic"]},
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inputType", "sourceRefs", "tenantMode"],
+      "properties": {
+        "inputType": {"enum": ["public-corpus-capture", "synthetic-preview", "synthetic-copy"]},
+        "sourceRefs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "tenantMode": {"enum": ["public-research", "synthetic-demo"]}
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["findingId", "category", "observation", "evidenceRefs", "confidence", "factual"],
+        "properties": {
+          "findingId": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "category": {"type": "string", "minLength": 1, "maxLength": 80},
+          "observation": {"type": "string", "minLength": 1, "maxLength": 2000},
+          "recommendation": {"type": ["string", "null"], "maxLength": 2000},
+          "evidenceRefs": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+          "confidence": {"enum": ["high", "medium", "low"]},
+          "factual": {"const": false},
+          "severity": {"enum": ["info", "low", "medium", "high", "critical"]}
+        }
+      }
+    }
+  }
+}

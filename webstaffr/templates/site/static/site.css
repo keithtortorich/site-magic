@@ -30,6 +30,28 @@ a:hover { text-decoration: underline; }
 
 .ws-icon { display: inline-block; vertical-align: -3px; flex-shrink: 0; }
 
+/* Local trade directions. These are bounded renderer treatments, not remote
+   component imports. They alter hierarchy and tokens while leaving verified
+   content and claims untouched. */
+.ws-design-workshop-contrast .ws-hero { background: var(--ws-design-ink); color: #fff; }
+.ws-design-workshop-contrast .ws-hero-tag { background: color-mix(in srgb, var(--ws-design-accent) 22%, transparent); color: #ffd4b5; }
+.ws-design-workshop-contrast .ws-hero-badge { border-color: var(--ws-design-accent); }
+.ws-design-workshop-contrast .ws-btn-primary { background: var(--ws-design-accent); }
+.ws-design-workshop-contrast .ws-section-muted { background: var(--ws-design-surface); }
+
+.ws-design-field-notebook { background: var(--ws-design-surface); }
+.ws-design-field-notebook .ws-header, .ws-design-field-notebook .ws-utility-bar { background: var(--ws-design-ink); }
+.ws-design-field-notebook .ws-hero { background: var(--ws-design-surface); }
+.ws-design-field-notebook .ws-hero-tag, .ws-design-field-notebook .ws-eyebrow { color: var(--ws-design-accent); }
+.ws-design-field-notebook .ws-reason-card, .ws-design-field-notebook .ws-review-card { border-color: color-mix(in srgb, var(--ws-design-support) 35%, var(--ws-border)); }
+.ws-design-field-notebook .ws-btn-primary { background: var(--ws-design-accent); }
+
+.ws-design-after-hours .ws-hero { background: var(--ws-design-ink); color: #fff; }
+.ws-design-after-hours .ws-header, .ws-design-after-hours .ws-utility-bar { background: #07151d; }
+.ws-design-after-hours .ws-hero-tag { background: color-mix(in srgb, var(--ws-design-support) 32%, transparent); color: #bde8f2; }
+.ws-design-after-hours .ws-btn-emergency { background: var(--ws-design-accent); }
+.ws-design-after-hours .ws-cta-band { background: var(--ws-design-support); }
+
 /* Motion: entrance + scroll-reveal (Emil Kowalski rules: start from
    scale(0.98)/opacity 0 not scale(0), purpose-driven timing, respects
    prefers-reduced-motion). Applied by selector so no template changes

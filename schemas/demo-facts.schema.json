@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:sitemagic:schema:demo-facts:1.0.0",
+  "title": "Synthetic Site Magic demo facts",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "tenantId", "tenantMode", "facts"],
+  "properties": {
+    "schemaVersion": {"const": "1.0.0"},
+    "tenantId": {"enum": ["demo-hvac-a", "demo-hvac-b"]},
+    "tenantMode": {"const": "synthetic-demo"},
+    "facts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["factId", "kind", "value", "source", "status"],
+        "properties": {
+          "factId": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "kind": {"enum": ["brand", "service", "contact", "location", "proof", "other"]},
+          "value": {"type": ["string", "array"]},
+          "source": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["type", "ref"],
+            "properties": {
+              "type": {"const": "demo-only"},
+              "ref": {"const": "VRE_SAFE_DEMO.md"}
+            }
+          },
+          "status": {"const": "verified"}
+        }
+      }
+    }
+  }
+}

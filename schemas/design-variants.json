@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:sitemagic:schema:design-variants:1.0.0",
+  "title": "Site Magic trade design variants",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "variants"],
+  "properties": {
+    "schemaVersion": {"const": "1.0.0"},
+    "variants": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "description", "bestFor", "tokens", "compositions", "provenance"],
+        "properties": {
+          "id": {"enum": ["workshop-contrast", "field-notebook", "after-hours"]},
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "bestFor": {"type": "array", "items": {"type": "string"}},
+          "tokens": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ink", "surface", "accent", "support"],
+            "properties": {
+              "ink": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"},
+              "surface": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"},
+              "accent": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"},
+              "support": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"}
+            }
+          },
+          "compositions": {"type": "object", "additionalProperties": {"type": "string"}},
+          "provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source", "recreationNote"],
+            "properties": {
+              "source": {"const": "OriginKit-inspired recreation"},
+              "recreationNote": {"type": "string"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

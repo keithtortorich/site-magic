@@ -1,0 +1,14 @@
+.venv/
+node_modules/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+private-research/
+artifacts/private-research/
+artifacts/runtime/
+*.db
+*.sqlite3
+.env
+.env.*
+!.env.example
+

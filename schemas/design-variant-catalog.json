@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0.0",
+  "variants": [
+    {
+      "id": "workshop-contrast",
+      "name": "Workshop Contrast",
+      "description": "Confident utility with an ink-dark field, safety-orange action color, crisp borders, and a split hero that gets visitors to the phone quickly.",
+      "bestFor": ["HVAC", "Electrician", "Roofing", "Garage Door Repair"],
+      "tokens": {"ink": "#111827", "surface": "#F7F7F2", "accent": "#E87524", "support": "#2B5963"},
+      "compositions": {"navigation": "compact", "hero": "split-form", "services": "three-card", "proof": "proof-rail", "contact": "short-form"},
+      "provenance": {"source": "OriginKit-inspired recreation", "recreationNote": "Recreated locally from the broad patterns of tuned animated hero, card, and CTA components; no OriginKit source or runtime dependency is included."}
+    },
+    {
+      "id": "field-notebook",
+      "name": "Field Notebook",
+      "description": "Warm, human, and editorial: paper surfaces, forest-green anchors, restrained motion, and a story-led layout that suits relationship-driven trades.",
+      "bestFor": ["Landscaping", "Tree Service", "Cleaning Services", "Other"],
+      "tokens": {"ink": "#20312B", "surface": "#F3EFE5", "accent": "#2F6B4F", "support": "#C98B52"},
+      "compositions": {"navigation": "compact", "hero": "editorial-split", "services": "service-cards", "proof": "story-proof", "contact": "short-form"},
+      "provenance": {"source": "OriginKit-inspired recreation", "recreationNote": "Recreated locally as a lower-motion editorial direction; all imagery, copy, and proof remain tenant-controlled."}
+    },
+    {
+      "id": "after-hours",
+      "name": "After Hours",
+      "description": "A calm midnight service direction with ice-blue information cues and copper urgency reserved for verified emergency availability.",
+      "bestFor": ["Plumber", "Water Damage Restoration", "HVAC"],
+      "tokens": {"ink": "#0B1F2A", "surface": "#EFF6F8", "accent": "#C97945", "support": "#367C91"},
+      "compositions": {"navigation": "compact", "hero": "stacked-form", "services": "service-list", "proof": "availability-band", "contact": "short-form"},
+      "provenance": {"source": "OriginKit-inspired recreation", "recreationNote": "Recreated locally for clear after-hours conversion; emergency language is rendered only when verified intake data enables it."}
+    }
+  ]
+}

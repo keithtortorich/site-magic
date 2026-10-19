@@ -19,7 +19,7 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import type { Server } from "node:http";
 import { timingSafeEqual } from "node:crypto";
-import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -46,6 +46,7 @@ import {
   OpenAICompatibleImageGenerator,
   resolveOpenAICompatibleChatConfig,
 } from "./site_magic_ai_compatible.ts";
+import { LocalArtifactStore, SyntheticImageGenerator } from "./site_magic_local.ts";
 import { PlaywrightEvidenceRunner } from "./site_magic_evidence_runner.ts";
 
 /** Rendered pages reference /static/site.css and /static/angel-widget.js,
@@ -57,6 +58,54 @@ const APP_STATIC_ROOT = join(fileURLToPath(new URL(".", import.meta.url)), "temp
 
 export class WorkerNotConfiguredError extends Error {}
 export class UnresolvableSourceError extends Error {}
+
+function normalizeQualityReportForControlPlane(report: Record<string, unknown>): Record<string, unknown> {
+  const findings = Array.isArray(report.findings) ? report.findings : [];
+  const lighthouse = report.lighthouse;
+  const normalized: Record<string, unknown> = {
+    ...report,
+    design_score: report.designScore,
+    applicable_max: report.applicableMax,
+    open_p0: findings.filter((finding) => (
+      finding && typeof finding === "object" && (finding as Record<string, unknown>).priority === "P0"
+    )).length,
+    open_p1: findings.filter((finding) => (
+      finding && typeof finding === "object" && (finding as Record<string, unknown>).priority === "P1"
+    )).length,
+    detector_findings: report.detectorFindings,
+    image_composition_passed: report.imageCompositionPassed,
+    axe_violations: report.axeViolations,
+    broken_links: report.brokenLinks,
+    missing_assets: report.missingAssets,
+    console_errors: report.consoleErrors,
+    failed_requests: report.failedRequests,
+    responsive_checks_passed: report.responsiveChecksPassed,
+    functional_checks_passed: report.functionalChecksPassed,
+    content_integrity_passed: report.contentIntegrityPassed,
+    tenant_isolation_passed: report.tenantIsolationPassed,
+  };
+  if (lighthouse && typeof lighthouse === "object" && !Array.isArray(lighthouse)) {
+    const lighthouseRecord = lighthouse as Record<string, unknown>;
+    normalized.lighthouse = {
+      ...lighthouseRecord,
+      best_practices: lighthouseRecord.bestPractices,
+    };
+  }
+  if (report.finishReview !== undefined) normalized.finish_review = report.finishReview;
+  if (report.authoredNotInterchangeable !== undefined) {
+    normalized.authored_not_interchangeable = report.authoredNotInterchangeable;
+  }
+  if (report.materialFindings !== undefined) normalized.material_findings = report.materialFindings;
+  return normalized;
+}
+
+async function removeWorkspace(workspace: string): Promise<void> {
+  try {
+    await rm(workspace, { recursive: true, force: true });
+  } catch (error) {
+    console.error(`[site-magic-worker] failed to remove workspace ${workspace}:`, error);
+  }
+}
 
 export interface WorkerDependencies {
   states: JobStateSink;
@@ -85,6 +134,7 @@ export function buildProductionDependencies(tenantId: string): WorkerDependencie
   // Vendor priority: OpenAI-compatible (Ollama/NVIDIA/vLLM) → OpenRouter/OmniRoute → OpenAI
   const useAICompatible = process.env.SITE_MAGIC_USE_AI_COMPATIBLE === "true";
   const useOmniRoute = process.env.SITE_MAGIC_USE_OMNIROUTE !== "false";
+  const useSyntheticAssets = process.env.SITE_MAGIC_USE_SYNTHETIC_ASSETS === "true";
   const codegenBaseUrl = process.env.SITE_MAGIC_CODEGEN_BASE_URL;
   const viaLocalGateway = Boolean(codegenBaseUrl?.includes("localhost"));
 
@@ -95,7 +145,7 @@ export function buildProductionDependencies(tenantId: string): WorkerDependencie
   if (useAICompatible) {
     // Use generic OpenAI-compatible implementations (Ollama, NVIDIA, vLLM, etc.)
     codexRuntime = new OpenAICompatibleCodegenRuntime();
-    imageGenerator = new OpenAICompatibleImageGenerator();
+    imageGenerator = useSyntheticAssets ? new SyntheticImageGenerator() : new OpenAICompatibleImageGenerator();
     const compatibleChat = resolveOpenAICompatibleChatConfig();
     const compatibleVerifyModel =
       process.env.SITE_MAGIC_IMAGE_VERIFY_MODEL ??
@@ -126,12 +176,12 @@ export function buildProductionDependencies(tenantId: string): WorkerDependencie
           }
         : { baseUrl: codegenBaseUrl }
     );
-    imageGenerator = new OpenRouterImageGenerator();
+    imageGenerator = useSyntheticAssets ? new SyntheticImageGenerator() : new OpenRouterImageGenerator();
   } else {
     // Fallback to OpenAI's Codex runtime while retaining the approved
     // OpenRouter image path (GPT Image org access remains unapproved).
     codexRuntime = new OpenAICodexRuntime();
-    imageGenerator = new OpenRouterImageGenerator();
+    imageGenerator = useSyntheticAssets ? new SyntheticImageGenerator() : new OpenRouterImageGenerator();
   }
 
   return {
@@ -140,7 +190,9 @@ export function buildProductionDependencies(tenantId: string): WorkerDependencie
     images: imageGenerator,
     imageVerifier,
     evidence: new PlaywrightEvidenceRunner({ tenantId, staticRoot: APP_STATIC_ROOT }),
-    artifacts: new SupabaseArtifactStore(),
+    artifacts: process.env.SITE_MAGIC_USE_LOCAL_ARTIFACTS === "true"
+      ? new LocalArtifactStore()
+      : new SupabaseArtifactStore(),
   };
 }
 
@@ -242,6 +294,9 @@ class HTTPControlPlaneBuildSink implements JobStateSink {
     if (!providerBuildId || !qualityReport || typeof qualityReport !== "object") {
       throw new Error("control-plane build completion did not include artifact and quality evidence");
     }
+    const normalizedQualityReport = normalizeQualityReportForControlPlane(
+      qualityReport as Record<string, unknown>,
+    );
     const factIds = this.source.plan.fact_snapshot
       .map((fact) => fact.fact_id)
       .filter((factId): factId is string => typeof factId === "string");
@@ -280,7 +335,7 @@ class HTTPControlPlaneBuildSink implements JobStateSink {
           control_build_id: this.source.build.build_id,
         },
         trace_manifest: traceManifest,
-        quality_report: qualityReport,
+        quality_report: normalizedQualityReport,
       },
       `${this.source.build.build_id}:preview`,
     );
@@ -480,15 +535,19 @@ export async function processJob(
 ): Promise<{ status: "ready_for_review" | "failed" | "quarantined"; buildId?: string }> {
   const record = await fetchJobRecord(jobId, tenantId, controlPlane);
   let source = resolveSource(record);
-  const workspace = await mkdtemp(join(tmpdir(), `site-magic-${jobId}-`));
-  if (source.type === "intake") {
-    const baseline = resolveRendererBaseline(record.source_payload);
-    if (baseline) {
-      const baselinePath = await materializeRendererBaseline(baseline, workspace, controlPlane);
-      source = { ...source, rendererBaselinePath: baselinePath };
+  const workspace = await mkdtemp(join(tmpdir(), "site-magic-job-"));
+  try {
+    if (source.type === "intake") {
+      const baseline = resolveRendererBaseline(record.source_payload);
+      if (baseline) {
+        const baselinePath = await materializeRendererBaseline(baseline, workspace, controlPlane);
+        source = { ...source, rendererBaselinePath: baselinePath };
+      }
     }
+    return await runJob({ jobId, tenantId, workspace, source }, buildDeps(tenantId));
+  } finally {
+    await removeWorkspace(workspace);
   }
-  return runJob({ jobId, tenantId, workspace, source }, buildDeps(tenantId));
 }
 
 export async function processControlPlaneBuild(
@@ -498,13 +557,17 @@ export async function processControlPlaneBuild(
   controlPlane: { baseUrl: string; apiKey: string; fetchImpl?: typeof fetch }
 ): Promise<{ status: "ready_for_review" | "failed" | "quarantined"; buildId?: string }> {
   const sourceRecord = await fetchControlPlaneBuildSource(buildId, tenantId, controlPlane);
-  const workspace = await mkdtemp(join(tmpdir(), `site-magic-control-${buildId}-`));
-  const source = resolveControlPlaneSource(sourceRecord);
-  const deps = buildDeps(tenantId);
-  return runJob(
-    { jobId: buildId, tenantId, workspace, source },
-    { ...deps, states: new HTTPControlPlaneBuildSink(sourceRecord, controlPlane) },
-  );
+  const workspace = await mkdtemp(join(tmpdir(), "site-magic-control-"));
+  try {
+    const source = resolveControlPlaneSource(sourceRecord);
+    const deps = buildDeps(tenantId);
+    return await runJob(
+      { jobId: buildId, tenantId, workspace, source },
+      { ...deps, states: new HTTPControlPlaneBuildSink(sourceRecord, controlPlane) },
+    );
+  } finally {
+    await removeWorkspace(workspace);
+  }
 }
 
 function verifySecret(provided: string | undefined, expected: string): boolean {

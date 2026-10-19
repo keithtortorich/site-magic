@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0.0",
+  "siteId": "private-demo-hvac-a",
+  "tenantId": "demo-hvac-a",
+  "tenantMode": "synthetic-demo",
+  "factSnapshotHash": "sha256:d16ceb6694b9e8f5dbf92a2d36389a612d606149f39819f7ad8b42ed855a3d47",
+  "designVariant": "workshop-contrast",
+  "sections": [
+    {"sectionId": "navigation", "sectionType": "navigation", "compositionVariant": "compact", "content": {"label": "Illustrative demo"}, "claims": [{"claimId": "nav-brand", "status": "supported", "text": "Northstar Comfort Demo", "factIds": ["a-brand-name"]}]},
+    {"sectionId": "hero", "sectionType": "hero", "compositionVariant": "split-form", "content": {"eyebrow": "Illustrative demo", "headline": "Comfort support made clear.", "cta": "View demo service options"}, "claims": [{"claimId": "hero-brand", "status": "supported", "text": "Northstar Comfort Demo", "factIds": ["a-brand-name"]}, {"claimId": "hero-response-time", "status": "needs_proof", "text": "", "reason": "No verified response-time fact exists."}]},
+    {"sectionId": "services", "sectionType": "services", "compositionVariant": "three-card", "content": {"items": ["Air conditioning repair", "Seasonal HVAC maintenance"]}, "claims": [{"claimId": "service-ac-repair", "status": "supported", "text": "Air conditioning repair", "factIds": ["a-service-ac-repair"]}, {"claimId": "service-maintenance", "status": "supported", "text": "Seasonal HVAC maintenance", "factIds": ["a-service-maintenance"]}, {"claimId": "service-24-7", "status": "omitted", "text": "", "reason": "24/7 availability is not a verified fact."}]},
+    {"sectionId": "proof", "sectionType": "proof", "compositionVariant": "quiet", "content": {"label": "Replace with verified proof"}, "claims": [{"claimId": "proof-rating", "status": "omitted", "text": "", "reason": "No ratings, testimonials, licenses, or guarantees are present in synthetic facts."}]},
+    {"sectionId": "contact", "sectionType": "contact", "compositionVariant": "short-form", "content": {"email": "demo-a@example.invalid", "formMode": "disabled-demo-only"}, "claims": [{"claimId": "contact-email", "status": "supported", "text": "demo-a@example.invalid", "factIds": ["a-contact-email"]}]},
+    {"sectionId": "footer", "sectionType": "footer", "compositionVariant": "simple", "content": {"label": "Illustrative synthetic demo only"}, "claims": []}
+  ]
+}

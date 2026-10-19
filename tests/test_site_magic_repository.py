@@ -85,6 +85,15 @@ class TestQualityGatesPass(unittest.TestCase):
     def test_score_below_90_percent_of_applicable_max_fails(self):
         self.assertFalse(quality_gates_pass(_passing_report(design_score=28)))  # 28/32 = 87.5%
 
+    def test_private_mvd_profile_keeps_safety_gates_but_relaxes_perfection_metrics(self):
+        report = _passing_report(
+            gate_profile="mvd",
+            open_p1=1,
+            lighthouse={"accessibility": 90, "performance": 68, "best_practices": 70, "seo": 70},
+        )
+        self.assertTrue(quality_gates_pass(report))
+        self.assertFalse(quality_gates_pass(dict(report, axe_violations=1)))
+        self.assertFalse(quality_gates_pass(dict(report, tenant_isolation_passed=False)))
     def test_open_p0_fails(self):
         self.assertFalse(quality_gates_pass(_passing_report(open_p0=1)))
 
