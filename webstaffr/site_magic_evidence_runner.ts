@@ -418,7 +418,13 @@ export class PlaywrightEvidenceRunner implements EvidenceRunner {
       };
     } finally {
       await browser?.close();
-      server.close();
+      // Lighthouse can leave keep-alive connections on the local server. End
+      // those connections before awaiting shutdown so the test runner and
+      // production worker do not retain an otherwise completed assessment.
+      server.closeAllConnections?.();
+      await new Promise<void>((resolve, reject) => {
+        server.close((error) => error ? reject(error) : resolve());
+      });
     }
   }
 }
