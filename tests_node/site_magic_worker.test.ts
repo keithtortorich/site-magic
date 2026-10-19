@@ -8,6 +8,7 @@ import {
   buildProductionDependencies,
   fetchJobRecord,
   fetchControlPlaneBuildSource,
+  processControlPlaneBuild,
   processJob,
   resolveSource,
   resolveControlPlaneSource,
@@ -359,6 +360,57 @@ test("fetchControlPlaneBuildSource rejects facts that drift from the approved sn
   );
 });
 
+test("control-plane callback normalizes the engine quality report and removes its workspace", async () => {
+  const source = {
+    build: {
+      build_id: "build-callback", tenant_id: "tenant-1", approval_id: "approval-1",
+      plan_id: "plan-1", plan_version: 1, plan_hash: "sha256:plan",
+      fact_snapshot_hash: "sha256:facts",
+    },
+    approval: { approval_id: "approval-1" },
+    plan: {
+      plan_id: "plan-1", tenant_id: "tenant-1", version: 1, status: "approved",
+      plan_hash: "sha256:plan", fact_snapshot_hash: "sha256:facts",
+      content: { pages: [], claims: [], ctas: [], imagery_requirements: [], visual_direction: {} },
+      fact_snapshot: [],
+    },
+    facts: [],
+  };
+  let callbackBody: Record<string, unknown> | undefined;
+  let workspace = "";
+  const stubFetch = (async (url: string | URL, init?: RequestInit) => {
+    if (url.toString().includes("/source?")) {
+      return new Response(JSON.stringify(source), { status: 200 });
+    }
+    callbackBody = JSON.parse(String(init?.body));
+    return new Response(null, { status: 204 });
+  }) as typeof fetch;
+  const result = await processControlPlaneBuild(
+    "build-callback",
+    "tenant-1",
+    (tenantId) => {
+      const { deps } = fakeDependencies();
+      const originalRun = deps.codex.run.bind(deps.codex);
+      deps.codex.run = async (args) => {
+        workspace = args.workspace;
+        return originalRun(args);
+      };
+      return deps;
+    },
+    { baseUrl: "https://control-plane.internal", apiKey: "internal-key", fetchImpl: stubFetch },
+  );
+  assert.deepEqual(result, { status: "ready_for_review", buildId: "dry-run-build-1" });
+  const qualityReport = callbackBody?.quality_report as Record<string, unknown>;
+  assert.equal(qualityReport.design_score, 36);
+  assert.equal(qualityReport.applicable_max, 40);
+  assert.equal(qualityReport.open_p0, 0);
+  assert.equal(qualityReport.open_p1, 0);
+  assert.equal(qualityReport.responsive_checks_passed, true);
+  assert.equal(qualityReport.finish_review, "PASS");
+  assert.equal(qualityReport.authored_not_interchangeable, true);
+  assert.equal(existsSync(workspace), false);
+});
+
 test("dry run: full circuit from control-plane job record to a sealed build, no live credentials", async () => {
   const { deps, states } = fakeDependencies();
   const stubFetch = (async () =>
@@ -381,10 +433,15 @@ test("dry run: full circuit from control-plane job record to a sealed build, no 
 test("intake circuit materializes the Site Renderer baseline before Site Magic runs", async () => {
   const { deps, states } = fakeDependencies();
   let productWorkspace = "";
+  let baselineSnapshot = "";
   const originalRun = deps.codex.run.bind(deps.codex);
   deps.codex.run = async (args) => {
     if (args.role === "product") productWorkspace = args.workspace;
-    return originalRun(args);
+    const result = await originalRun(args);
+    if (args.role === "product") {
+      baselineSnapshot = readFileSync(join(args.workspace, "renderer-baseline", "index.html"), "utf8");
+    }
+    return result;
   };
   const stubFetch = (async (url: string | URL) => {
     if (url.toString().includes("/site-magic/internal/jobs/")) {
@@ -406,18 +463,8 @@ test("intake circuit materializes the Site Renderer baseline before Site Magic r
 
   assert.equal(result.status, "ready_for_review");
   assert.equal(states.at(-1), "ready_for_review");
-  assert.match(
-    readFileSync(join(productWorkspace, "renderer-baseline", "index.html"), "utf8"),
-    /Acme HVAC baseline/,
-  );
-  assert.match(
-    readFileSync(join(productWorkspace, "index.html"), "utf8"),
-    /Acme HVAC baseline/,
-  );
-  assert.deepEqual(
-    JSON.parse(readFileSync(join(productWorkspace, "renderer-baseline", "manifest.json"), "utf8")).pages,
-    ["home", "about", "contact"],
-  );
+  assert.match(baselineSnapshot, /Acme HVAC baseline/);
+  assert.equal(existsSync(productWorkspace), false, "job workspace must be removed after completion");
 });
 
 test("webhook server rejects a wrong shared secret", async () => {

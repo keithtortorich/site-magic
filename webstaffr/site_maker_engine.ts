@@ -1042,7 +1042,15 @@ export class SiteMakerEngine {
           manifestSha256: manifestHash(job, report),
         });
         await this.move(job, "ready_for_review", {
-          buildId: sealed.buildId, remediationRounds, rebuilds, report,
+          buildId: sealed.buildId,
+          remediationRounds,
+          rebuilds,
+          report: {
+            ...report,
+            finishReview: finish.verdict,
+            authoredNotInterchangeable: finish.authoredNotInterchangeable,
+            materialFindings: finish.materialFindings ?? [],
+          },
         });
         return { status: "ready_for_review", buildId: sealed.buildId };
       }
