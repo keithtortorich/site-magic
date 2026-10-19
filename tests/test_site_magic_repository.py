@@ -94,7 +94,6 @@ class TestQualityGatesPass(unittest.TestCase):
         self.assertTrue(quality_gates_pass(report))
         self.assertFalse(quality_gates_pass(dict(report, axe_violations=1)))
         self.assertFalse(quality_gates_pass(dict(report, tenant_isolation_passed=False)))
-
     def test_open_p0_fails(self):
         self.assertFalse(quality_gates_pass(_passing_report(open_p0=1)))
 
