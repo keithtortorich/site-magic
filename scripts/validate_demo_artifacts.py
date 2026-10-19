@@ -20,6 +20,7 @@ from typing import Any
 TENANTS = {"demo-hvac-a", "demo-hvac-b"}
 FACT_STATUSES = {"verified"}
 CLAIM_STATUSES = {"supported", "omitted", "needs_proof"}
+DESIGN_VARIANTS = {"workshop-contrast", "field-notebook", "after-hours"}
 MODEL_WORKERS = {"gemini-visual", "grok-text-seo", "gemini-critic", "grok-critic"}
 REAL_CONTACT_MARKERS = ("@gmail.", "@yahoo.", "@outlook.", "@hotmail.", "@icloud.")
 
@@ -82,6 +83,8 @@ def validate_site_spec(value: dict[str, Any], facts: dict[str, Any], errors: lis
     expected_hash = synthetic_hash(facts)
     if value.get("factSnapshotHash") != expected_hash:
         fail(errors, "site-spec: factSnapshotHash does not match the fact pack")
+    if value.get("designVariant") is not None and value.get("designVariant") not in DESIGN_VARIANTS:
+        fail(errors, f"site-spec: designVariant must be one of {sorted(DESIGN_VARIANTS)}")
     fact_ids = {item.get("factId") for item in facts.get("facts", [])}
     sections = value.get("sections")
     if not isinstance(sections, list) or not sections:

@@ -11,6 +11,7 @@
     "tenantId": {"enum": ["demo-hvac-a", "demo-hvac-b"]},
     "tenantMode": {"const": "synthetic-demo"},
     "factSnapshotHash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+    "designVariant": {"enum": ["workshop-contrast", "field-notebook", "after-hours"]},
     "sections": {
       "type": "array",
       "minItems": 1,

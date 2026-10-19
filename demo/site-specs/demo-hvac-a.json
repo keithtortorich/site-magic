@@ -4,6 +4,7 @@
   "tenantId": "demo-hvac-a",
   "tenantMode": "synthetic-demo",
   "factSnapshotHash": "sha256:d16ceb6694b9e8f5dbf92a2d36389a612d606149f39819f7ad8b42ed855a3d47",
+  "designVariant": "workshop-contrast",
   "sections": [
     {"sectionId": "navigation", "sectionType": "navigation", "compositionVariant": "compact", "content": {"label": "Illustrative demo"}, "claims": [{"claimId": "nav-brand", "status": "supported", "text": "Northstar Comfort Demo", "factIds": ["a-brand-name"]}]},
     {"sectionId": "hero", "sectionType": "hero", "compositionVariant": "split-form", "content": {"eyebrow": "Illustrative demo", "headline": "Comfort support made clear.", "cta": "View demo service options"}, "claims": [{"claimId": "hero-brand", "status": "supported", "text": "Northstar Comfort Demo", "factIds": ["a-brand-name"]}, {"claimId": "hero-response-time", "status": "needs_proof", "text": "", "reason": "No verified response-time fact exists."}]},

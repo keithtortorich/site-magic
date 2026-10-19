@@ -4,6 +4,7 @@
   "tenantId": "demo-hvac-b",
   "tenantMode": "synthetic-demo",
   "factSnapshotHash": "sha256:fcf055e0ab387250d93431cc41eb29989dd754d5b94cc9fac34bb654db00b97b",
+  "designVariant": "field-notebook",
   "sections": [
     {"sectionId": "navigation", "sectionType": "navigation", "compositionVariant": "compact", "content": {"label": "Illustrative demo"}, "claims": [{"claimId": "nav-brand", "status": "supported", "text": "Cinderblock Climate Demo", "factIds": ["b-brand-name"]}]},
     {"sectionId": "hero", "sectionType": "hero", "compositionVariant": "stacked-form", "content": {"eyebrow": "Illustrative demo", "headline": "A clearer next step for climate care.", "cta": "View demo service options"}, "claims": [{"claimId": "hero-brand", "status": "supported", "text": "Cinderblock Climate Demo", "factIds": ["b-brand-name"]}, {"claimId": "hero-local", "status": "needs_proof", "text": "", "reason": "No verified service area exists in the synthetic fact pack."}]},

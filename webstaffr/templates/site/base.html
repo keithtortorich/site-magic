@@ -34,7 +34,7 @@
 {% endif %}
 {% block extra_head %}{% endblock %}
 </head>
-<body>
+<body class="ws-design-{{ design_variant }}" style="--ws-design-ink: {{ design_variant_tokens.ink }}; --ws-design-surface: {{ design_variant_tokens.surface }}; --ws-design-accent: {{ design_variant_tokens.accent }}; --ws-design-support: {{ design_variant_tokens.support }};">
 {% import "site/_icons.html" as icons %}
 <div class="ws-utility-bar">
   <div class="ws-utility-bar-inner">
